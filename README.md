@@ -28,6 +28,8 @@ Environmental debris stays outside the central combat corridor and uses muted ru
 
 The finished presentation uses protected cockpit-style HUD panels, a dedicated Warden integrity display, soft layered solar particles, controlled bloom and exposure, responsive layouts, and a shared solar-aperture language across title, pause, and failure states.
 
+Multi-part procedural models give the player swept wings, armor, engine pods, intakes, and gun housings; enemy archetypes use distinct interceptor, bomber, turret, and shield chassis; and Wardens feature themed pylons with independently rotating armor rings.
+
 ## Structure
 Each sector contains three named levels of escalating waves — darters, orb-lobbing bombers, debris turrets, and shielded elites — followed by a themed **Warden** boss. Clear a sector, patch a hull point, and push into the next region.
 
