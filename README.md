@@ -17,7 +17,7 @@ Offense and defense share one gauge. Every fight is a tension-and-release rhythm
 | Steer | `W` `A` `S` `D` / arrows |
 | Fire | hold `J` or click |
 | Vent | `Space` |
-| Barrel roll | `K` or the HUD control |
+| Barrel roll | `Q` or the HUD control |
 | Lock target | `L` or the HUD control |
 | Pause / resume | `P` or `Escape` |
 
@@ -41,6 +41,8 @@ Each sector contains three named levels and nine authored encounters—three per
 
 REDLINE uses permanent ship progression rather than temporary roguelike upgrades. The ship editor fits a reactor, wing frame, drive, weapon array, and plating package. Installed hardware persists and changes damage, firing pattern, cooling, heat efficiency, speed, vent strength, collision resistance, roll recovery, and hull capacity. Components also alter visible wing proportions, armor, weapon emitters, reactor glow, and drive color. A persistent level selector unlocks each of the campaign's 15 stages as it is reached.
 
+The construction-gantry Ship Builder presents a top-down ship blueprint, attachment categories, installable inventory cards, live performance statistics, and loadout capacity readouts. It is available from the title screen and between levels.
+
 Each cleared route grants an upgrade core for the three-branch **Ship Circuit**. Arsenal research unlocks pulse repeaters, a piercing solar railgun, a chaining arc projector, seeker pods, and the perfect-vent-powered thermal spear. Flight Systems improves movement, barrel rolls, lock-on, salvage, and overdrive performance; Survival improves cooling, hull, vent range, impact protection, and overheat recovery. Weapon blueprints purchased in the circuit become installable firing profiles in the Ship Editor.
 
 Level clears now provide route briefings without temporary rewards. Later levels add tougher enemies, distinct obstacle families, larger landmarks, cinematic entrances, visible damage sparks, articulated enemy components, and physical armor wreckage.
@@ -52,6 +54,8 @@ All 15 levels have their own environment kit. Within a sector, the approach, int
 Authored environmental events punctuate longer encounters: ash surges, shifting wreck fields, forge cycles, coolant vents, solar flare warnings, ring shifts, and gravity shear. Collision feedback includes brief hit-stop, stronger camera response, armor deflection, wreckage, and progressive ship scorching.
 
 Clearing Core Threshold ends the 15-level campaign with a dedicated completion state rather than recycling the final sector.
+
+Every level opens with a named authored set piece, from collapsing beacons and carrier transit to mirror storms, flare shadows, and the final Warden convergence. Story, Ace, and Redline difficulty modes alter enemy durability and aggression while adjusting score rewards. Accessibility options include aim assistance, high-contrast combat, automatic emergency venting, reduced motion, and the existing visual intensity controls. Eight persistent Flight Records track combat, building, research, survival, boss, and campaign milestones. Completing the campaign unlocks the Sunbreaker weapon array and Warden Crown plating.
 
 Each sector also has its own looping score: open ambience in Ember Reach, ominous drift through Grave Orbit, an industrial pulse in Helioforge Array, urgent momentum in Corona Scar, and a dark transmission motif at Core Threshold. The title screen, transitions, combat, vents, impacts, bosses, and sector clears have dedicated audio cues.
 
