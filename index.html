@@ -67,6 +67,13 @@
   .tutorial-actions { display:flex;justify-content:flex-end;gap:8px;margin-top:11px; }
   .tutorial-actions .menu-link { padding:7px 11px;font-size:9px; }
   .tutorial-actions .hide { display:none; }
+  #combatActions { position:absolute;right:18px;bottom:22px;display:flex;gap:8px;pointer-events:none;opacity:0;visibility:hidden;transition:opacity .2s; }
+  #combatActions.show { pointer-events:auto;opacity:1;visibility:visible; }
+  .combat-btn { width:92px;height:48px;color:#ffd7c2;background:rgba(8,5,8,.72);border:1px solid rgba(255,150,90,.32);clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);font:800 9px/1.2 "Segoe UI",sans-serif;letter-spacing:2px;text-transform:uppercase;cursor:pointer; }
+  .combat-btn b { display:block;color:var(--cyan);font-size:13px;margin-bottom:3px; }
+  .combat-btn.active { border-color:var(--cyan);box-shadow:inset 0 0 18px rgba(34,230,255,.2),0 0 12px rgba(34,230,255,.25); }
+  #lockStatus { position:absolute;left:50%;top:54%;transform:translate(-50%,-50%);color:#ffec9c;font-size:9px;letter-spacing:4px;text-shadow:0 0 10px var(--hot);opacity:0; }
+  #lockStatus.show { opacity:1; }
 
   /* banners */
   #banner { position:absolute; left:50%; top:38%; transform:translate(-50%,-50%); text-align:center; opacity:0; transition:opacity .3s; }
@@ -161,6 +168,13 @@
   .upgrade-card b { display:block; color:#ffd56e; font-size:15px; letter-spacing:2px; text-transform:uppercase; }
   .upgrade-card span { display:block; margin-top:10px; color:#cfaaa0; font-size:12px; line-height:1.5; }
   .upgrade-card em { display:block; margin-top:16px; color:var(--cyan); font:normal 9px/1 "Segoe UI",sans-serif; letter-spacing:3px; text-transform:uppercase; }
+  .hangar-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0; }
+  .part-slot { padding:16px;background:rgba(255,255,255,.035);border:1px solid rgba(255,145,85,.2); }
+  .part-slot label { display:block;color:var(--cyan);font-size:9px;letter-spacing:3px;text-transform:uppercase;margin-bottom:9px; }
+  .part-slot select { width:100%;padding:10px;color:#fff1e7;background:#16090a;border:1px solid rgba(255,122,44,.45);font-weight:700; }
+  #shipStats { display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:16px 0; }
+  .ship-stat {padding:10px;background:rgba(0,0,0,.3);border-top:1px solid rgba(34,230,255,.25);text-align:center}.ship-stat b{display:block;color:#fff;font-size:18px}.ship-stat span{color:#b98e85;font-size:8px;letter-spacing:2px;text-transform:uppercase}
+  .level-grid {display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin:18px 0}.level-node{padding:12px 6px;color:#ffe1cf;background:rgba(255,255,255,.04);border:1px solid rgba(255,140,80,.22);cursor:pointer}.level-node:disabled{opacity:.25;cursor:not-allowed}.level-node b{display:block;color:var(--cyan);font-size:12px}.level-node span{display:block;margin-top:5px;font-size:8px;letter-spacing:1px}
   @media (max-width:760px) { .title-console{display:block;width:min(88vw,520px)} .solar-aperture{width:100vw;right:-45vw;opacity:.48} .mission-copy{font-size:12px} #title .logo{font-size:clamp(58px,18vw,100px)} .upgrade-grid{grid-template-columns:1fr}.upgrade-card{min-height:0}.intermission-console{max-height:90vh;overflow:auto;padding:20px} }
   @media (max-width:620px) { .corner{margin:8px;padding:8px 9px;min-width:110px}.val{font-size:20px}#wavewrap .val{font-size:14px}#distwrap{top:9px;width:34vw}#heatwrap{width:90vw;bottom:10px}#bossHud{top:52px;width:78vw} }
   @media (max-height:760px) { #title .logo{font-size:clamp(55px,9vw,100px)} .mission-copy{margin-top:10px}.record{margin-top:12px}.controls{margin-top:12px!important}.menu-actions{margin-top:14px}.panel{padding:22px}.setting{padding:11px 0} }
@@ -190,6 +204,8 @@
   </div>
 
   <div id="banner"><div class="big"></div><div class="sub"></div></div>
+  <div id="lockStatus">TARGET LOCKED</div>
+  <div id="combatActions"><button class="combat-btn" id="rollBtn"><b>K</b>Barrel roll</button><button class="combat-btn" id="lockBtn"><b>L</b>Lock target</button></div>
   <div id="tutorialHud" class="hide">
     <div class="tutorial-kicker" id="tutorialKicker">Flight school // 1 of 5</div>
     <div class="tutorial-objective" id="tutorialObjective">Take the controls</div>
@@ -238,12 +254,37 @@
       <div class="menu-actions">
         <button class="btn" id="startbtn">Launch Run</button>
         <button class="menu-link" id="trainingbtn">Training Flight</button>
+        <button class="menu-link" id="levelsbtn">Level Select</button>
+        <button class="menu-link" id="hangarbtn">Ship Editor</button>
         <button class="menu-link" id="settingsbtn">Flight Settings</button>
       </div>
       <div class="controls">
         <b>Steer</b> <span class="k">WASD</span> / arrows &nbsp; <b>Fire</b> <span class="k">J</span> / click &nbsp; <b>Vent</b> <span class="k">SPACE</span>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="screen hide" id="hangar">
+  <div class="panel" style="width:min(94vw,820px)">
+    <div class="panel-head"><div class="panel-kicker">Persistent hardware</div><h2>SHIP EDITOR</h2></div>
+    <p class="mission-copy" style="margin-top:0">Install permanent components. Your fitted parts apply to every campaign launch.</p>
+    <div class="hangar-grid">
+      <div class="part-slot"><label for="reactorPart">Reactor</label><select id="reactorPart"></select></div>
+      <div class="part-slot"><label for="wingPart">Wing frame</label><select id="wingPart"></select></div>
+      <div class="part-slot"><label for="drivePart">Drive</label><select id="drivePart"></select></div>
+    </div>
+    <div id="shipStats"></div>
+    <button class="menu-link" id="hangarBack">Save Loadout</button>
+  </div>
+</div>
+
+<div class="screen hide" id="levelSelect">
+  <div class="panel" style="width:min(94vw,880px)">
+    <div class="panel-head"><div class="panel-kicker">Campaign chart</div><h2>LEVEL SELECT</h2></div>
+    <p class="mission-copy" style="margin-top:0">Cleared routes remain unlocked. Wardens wait after every sector's third level.</p>
+    <div class="level-grid" id="levelGrid"></div>
+    <button class="menu-link" id="levelsBack">Back</button>
   </div>
 </div>
 
@@ -327,6 +368,36 @@ const settings = {
   hud: Number.isFinite(savedSettings.hud) ? Math.max(0.4,Math.min(1,savedSettings.hud)) : 1,
 };
 function saveSettings(){ localStorage.setItem('redline_settings', JSON.stringify(settings)); }
+const PARTS={
+  reactor:[
+    {id:'standard',name:'Standard reactor',unlock:1,damage:1,cooling:1,heat:1},
+    {id:'cryo',name:'Cryo reactor',unlock:2,damage:.95,cooling:1.35,heat:.92},
+    {id:'redline',name:'Redline reactor',unlock:4,damage:1.28,cooling:.88,heat:1.08},
+  ],
+  wing:[
+    {id:'standard',name:'Standard wings',unlock:1,speed:1,hull:0,roll:1},
+    {id:'agile',name:'Vector wings',unlock:2,speed:1.22,hull:0,roll:.7},
+    {id:'armor',name:'Armor wings',unlock:5,speed:.9,hull:2,roll:1.15},
+  ],
+  drive:[
+    {id:'standard',name:'Standard drive',unlock:1,speed:1,vent:1},
+    {id:'surge',name:'Surge drive',unlock:3,speed:1.16,vent:.92},
+    {id:'purge',name:'Purge drive',unlock:6,speed:.96,vent:1.35},
+  ],
+};
+const profile=(()=>{try{return Object.assign({equipped:{reactor:'standard',wing:'standard',drive:'standard'},unlockedLevel:1},JSON.parse(localStorage.getItem('redline_profile'))||{});}catch{return{equipped:{reactor:'standard',wing:'standard',drive:'standard'},unlockedLevel:1};}})();
+function saveProfile(){localStorage.setItem('redline_profile',JSON.stringify(profile));}
+function equippedPart(slot){const part=PARTS[slot].find(p=>p.id===profile.equipped[slot]);return part&&part.unlock<=profile.unlockedLevel?part:PARTS[slot][0];}
+function applyShipLoadout(){
+  const reactor=equippedPart('reactor'),wing=equippedPart('wing'),drive=equippedPart('drive');
+  Object.assign(runMods,{damage:reactor.damage,cooling:reactor.cooling,heat:reactor.heat,vent:drive.vent,score:1,maxHull:4+wing.hull,speed:wing.speed*drive.speed,roll:wing.roll});
+  state.maxHull=runMods.maxHull;
+  if(typeof player!=='undefined')player.traverse(n=>{
+    if(n.userData.partSlot==='wing'){n.scale.x=wing.id==='armor'?1.12:wing.id==='agile'?.86:1;n.scale.y=wing.id==='armor'?1.6:.9;}
+    if(n.userData.partSlot==='reactor'){n.material.color.setHex(reactor.id==='cryo'?0x7af5ff:reactor.id==='redline'?0xff5633:0x8ff6ff);n.material.emissive?.copy(n.material.color);}
+    if(n.userData.partSlot==='drive'){n.material.color.setHex(drive.id==='purge'?0x78f7ff:drive.id==='surge'?0xffb23e:0xc9fbff);n.scale.x=n.scale.z=drive.id==='surge'?1.25:1;}
+  });
+}
 
 // ============================================================= CONSTANTS
 const BOUND_X = 7.2, BOUND_Y = 4.2;
@@ -512,14 +583,14 @@ scene.add(player);
   const fus = new THREE.Mesh(new THREE.ConeGeometry(0.54, 2.8, 7), bodyMat); fus.rotation.x = Math.PI*-0.5; fus.position.z=-.25; player.add(fus);
   const spine=new THREE.Mesh(new THREE.BoxGeometry(.48,.28,1.8),armorMat);spine.position.set(0,.05,.35);player.add(spine);
   for(const side of [-1,1]){
-    const wing=new THREE.Mesh(new THREE.BoxGeometry(1.55,.13,.78),accMat);wing.position.set(side*.98,-.02,.28);wing.rotation.y=side*.24;player.add(wing);
+    const wing=new THREE.Mesh(new THREE.BoxGeometry(1.55,.13,.78),accMat);wing.position.set(side*.98,-.02,.28);wing.rotation.y=side*.24;wing.userData.partSlot='wing';player.add(wing);
     const tip=new THREE.Mesh(new THREE.ConeGeometry(.18,.85,5),armorMat);tip.rotation.x=-Math.PI/2;tip.position.set(side*1.72,.02,.38);player.add(tip);
     const pod=new THREE.Mesh(new THREE.CylinderGeometry(.24,.28,.9,10),armorMat);pod.rotation.x=Math.PI/2;pod.position.set(side*.55,-.06,.82);player.add(pod);
     const intake=new THREE.Mesh(new THREE.TorusGeometry(.19,.055,6,12),new THREE.MeshBasicMaterial({color:0x45e5f4}));intake.rotation.x=Math.PI/2;intake.position.set(side*.55,-.06,.36);player.add(intake);
     const fin=new THREE.Mesh(new THREE.BoxGeometry(.1,.55,.65),accMat);fin.position.set(side*1.45,.28,.5);fin.rotation.z=side*-.12;player.add(fin);
   }
   const cockpit=new THREE.Mesh(new THREE.SphereGeometry(.34,12,8),new THREE.MeshStandardMaterial({color:0x8ff6ff,emissive:0x22cce8,emissiveIntensity:2,metalness:.2,roughness:.18}));
-  cockpit.scale.set(1,.45,1.45); cockpit.position.set(0,.31,-.25); player.add(cockpit);
+  cockpit.scale.set(1,.45,1.45); cockpit.position.set(0,.31,-.25);cockpit.userData.partSlot='reactor'; player.add(cockpit);
   for(const x of [-1.28,1.28]){ const strip=new THREE.Mesh(new THREE.BoxGeometry(.09,.055,.92),new THREE.MeshBasicMaterial({color:0x36dff5})); strip.position.set(x,.09,.2); player.add(strip); }
   // hot gun barrels (their glow encodes heat)
   const barMat = new THREE.MeshBasicMaterial({ color:0x2a90ff });
@@ -527,7 +598,7 @@ scene.add(player);
   gunR = gunL.clone(); gunR.material = barMat.clone(); gunR.position.x=0.95; player.add(gunR);
   // engine
   const eng = new THREE.Mesh(new THREE.ConeGeometry(0.2,0.68,10), new THREE.MeshBasicMaterial({ color:0xc9fbff, transparent:true, opacity:0.74, blending:THREE.AdditiveBlending }));
-  eng.rotation.x = Math.PI*-0.5; eng.position.z = 1.35; player.add(eng); engineFlame = eng;
+  eng.rotation.x = Math.PI*-0.5; eng.position.z = 1.35;eng.userData.partSlot='drive'; player.add(eng); engineFlame = eng;
   for(const x of [-.42,.42]){ const trail=new THREE.Mesh(new THREE.ConeGeometry(.13,2.25,10),new THREE.MeshBasicMaterial({color:0x22dff2,transparent:true,opacity:.25,blending:THREE.AdditiveBlending,depthWrite:false})); trail.rotation.x=-Math.PI/2; trail.position.set(x,0,1.9); player.add(trail); }
 }
 var gunL, gunR, engineFlame;
@@ -543,6 +614,14 @@ function makeHaloTexture(){ const c=document.createElement('canvas');c.width=c.h
 const hostileHalo=makeHaloTexture();
 const eboltPool = makePool(()=>{ const g=new THREE.Group(); const core=new THREE.Mesh(new THREE.SphereGeometry(.3,10,10),new THREE.MeshBasicMaterial({color:0xffffff})); const glow=new THREE.Mesh(new THREE.SphereGeometry(.56,10,10),new THREE.MeshBasicMaterial({color:0xff2418,transparent:true,opacity:.58,blending:THREE.AdditiveBlending,depthWrite:false})); const halo=new THREE.Sprite(new THREE.SpriteMaterial({map:hostileHalo,transparent:true,opacity:.9,depthWrite:false,depthTest:false}));halo.scale.set(1.65,1.65,1);g.add(glow,core,halo);g.userData.halo=halo;return g; }, 120);
 for (const b of boltPool.free) b.rotation.x = Math.PI*0.5;
+const obstacles=[];
+function spawnObstacle(level,offset=0){
+  const g=new THREE.Group(),mat=new THREE.MeshStandardMaterial({color:level===1?0x4e4947:0x322d31,metalness:level?0.72:.18,roughness:level?.42:.86});
+  if(level===0){const rock=new THREE.Mesh(new THREE.DodecahedronGeometry(1.2+Math.random()*1.2,0),mat);rock.scale.set(1,.65+Math.random(),1.4);g.add(rock);g.userData.radius=1.45;}
+  else if(level===1){const beam=new THREE.Mesh(new THREE.BoxGeometry(4.2,.65,1.1),mat);g.add(beam);const lamp=new THREE.Mesh(new THREE.BoxGeometry(3.6,.12,1.18),new THREE.MeshBasicMaterial({color:0xd16b35}));g.add(lamp);g.userData.radius=2;}
+  else{for(const side of [-1,1]){const blade=new THREE.Mesh(new THREE.BoxGeometry(1.1,4.8,.7),mat);blade.position.x=side*1.8;blade.rotation.z=side*.2;g.add(blade);}g.userData.radius=1.5;}
+  g.position.set((Math.random()-.5)*11,(Math.random()-.5)*6,-95-offset-Math.random()*35);g.userData.speed=31+level*4;g.userData.spin=(Math.random()-.5)*1.2;scene.add(g);obstacles.push(g);
+}
 
 // explosion particles (points bursts)
 const bursts = [];
@@ -684,20 +763,13 @@ const state = {
   shake:0, time:0, audioCueT:8, cinematicT:0, timers:[],
 };
 const runMods={damage:1,cooling:1,vent:1,score:1,maxHull:4,heat:1};
-const UPGRADES=[
-  {name:'Cryo coils',desc:'Passive weapon cooling increases by 22%.',tag:'Thermal control',apply:()=>runMods.cooling*=1.22},
-  {name:'Lance focus',desc:'Primary bolts deal 25% more damage.',tag:'Weapon output',apply:()=>runMods.damage*=1.25},
-  {name:'Wide purge',desc:'Vent radius and disruption strength increase.',tag:'Defensive burst',apply:()=>runMods.vent*=1.2},
-  {name:'Reactive plate',desc:'Add one maximum hull point and repair one.',tag:'Survivability',apply:()=>{runMods.maxHull++;state.maxHull=runMods.maxHull;state.hull=Math.min(state.maxHull,state.hull+1);updateHull();}},
-  {name:'Hunter relay',desc:'All combat score gains increase by 20%.',tag:'Run score',apply:()=>runMods.score*=1.2},
-  {name:'Heat sink',desc:'Shots generate 12% less weapon heat.',tag:'Fire discipline',apply:()=>runMods.heat*=.88},
-];
 const TUTORIAL_STEPS=[
   {title:'Take the controls',copy:'Move with WASD or the arrow keys. Bank in any direction to calibrate the flight surfaces.'},
   {title:'Fire a burst',copy:'Hold J or the pointer to fire. Your guns use heat instead of ammunition.'},
   {title:'Ride the redline',copy:'Keep firing until the heat gauge enters the striped red zone. Release before the weapons overheat.'},
   {title:'Perfect vent',copy:'Press Space while the gauge is in the red zone. A perfect vent clears hostile fire and damages nearby targets.'},
-  {title:'Break the target',copy:'Destroy the training drone. Watch its red charge marker—bright pulses mean an attack is imminent.'},
+  {title:'Barrel roll',copy:'Press K or the Barrel Roll control. Rolling grants a brief window of invulnerability.'},
+  {title:'Lock and break',copy:'Press L or Lock Target, then destroy the drone. Locked primary bolts steer toward the selected target.'},
 ];
 const tutorial={active:false,step:0,moved:0,shots:0,target:null};
 function renderTutorial(){
@@ -712,7 +784,7 @@ function advanceTutorial(){
   tutorial.step++;
   if(tutorial.step>=TUTORIAL_STEPS.length){finishTutorial();return;}
   if(tutorial.step===3){keys['KeyJ']=false;pointerFire=false;state.firing=false;state.heat=Math.max(REDLINE+2,Math.min(92,state.heat));}
-  if(tutorial.step===4){
+  if(tutorial.step===5){
     tutorial.target=spawnEnemy('turret',0,0);tutorial.target.mesh.position.z=-52;tutorial.target.fireT=1.8;tutorial.target.training=true;
     banner('LIVE TARGET','READ THE ATTACK SIGNAL');
   }
@@ -740,9 +812,24 @@ window.__redline = { state, enemies, get boss(){return boss;}, kill(){ state.hul
 
 // ============================================================= INPUT
 const keys = {};
+let rollT=0,rollCooldown=0,rollDir=1,lockedEnemy=null;
+function doBarrelRoll(){
+  if(state.phase!=='playing'||rollCooldown>0)return;
+  rollT=.68;rollCooldown=1.35*(runMods.roll||1);rollDir=player.position.x>0?-1:1;state.invuln=Math.max(state.invuln,.72);sfx('vent');if(tutorial.active&&tutorial.step===4)advanceTutorial();
+}
+function toggleLock(){
+  if(state.phase!=='playing')return;
+  if(lockedEnemy&&enemies.includes(lockedEnemy)){lockedEnemy=null;}
+  else lockedEnemy=enemies.filter(e=>e.mesh.position.z<DESPAWN_Z).sort((a,b)=>a.mesh.position.distanceTo(player.position)-b.mesh.position.distanceTo(player.position))[0]||null;
+  document.getElementById('lockBtn').classList.toggle('active',!!lockedEnemy);
+  document.getElementById('lockStatus').classList.toggle('show',!!lockedEnemy);
+  sfx('hover');
+}
 addEventListener('keydown', e=>{ keys[e.code]=true;
   if(e.code==='Escape' && !document.getElementById('settings').classList.contains('hide')){ e.preventDefault(); closeSettings(); return; }
   if((e.code==='KeyP'||e.code==='Escape') && (state.phase==='playing'||state.paused)){ e.preventDefault(); togglePause(); return; }
+  if(e.code==='KeyK'){e.preventDefault();doBarrelRoll();return;}
+  if(e.code==='KeyL'){e.preventDefault();toggleLock();return;}
   if(e.code==='Space'){ e.preventDefault(); doVent(); }
 });
 addEventListener('keyup', e=>{ keys[e.code]=false; });
@@ -793,8 +880,8 @@ document.addEventListener('visibilitychange', ()=>{ if(document.hidden && state.
 function buildSector(sector){
   const waves = [];
   const cols = [-5,-2.5,0,2.5,5];
-  for(let level=0;level<3;level++)for(let encounter=0;encounter<2;encounter++){
-    const w=level*2+encounter;
+  for(let level=0;level<3;level++)for(let encounter=0;encounter<3;encounter++){
+    const w=level*3+encounter;
     const wave=[]; const n = 3 + sector + w;
     for (let i=0;i<n;i++){
       let type=level===0?'darter':level===1?'turret':'shield';
@@ -816,6 +903,7 @@ function sectorThemeFor(sector){return SECTORS[Math.min(sector-1,SECTORS.length-
 function enterLevel(levelIndex,delayed=false){
   if(state.level===levelIndex)return;
   state.level=levelIndex; currentSectorTheme=sectorThemeFor(state.sector);
+  profile.unlockedLevel=Math.max(profile.unlockedLevel,(state.sector-1)*3+levelIndex+1);saveProfile();
   state.cinematicT=2.1;
   sunHue=Math.min(.5,currentSectorTheme.sun+levelIndex*.035);
   setLevelScenery(currentSectorTheme,levelIndex);
@@ -823,8 +911,8 @@ function enterLevel(levelIndex,delayed=false){
   const announce=()=>banner('LEVEL '+state.sector+'-'+(levelIndex+1),currentSectorTheme.levels[levelIndex]);
   if(delayed)after(1.45,()=>{if(state.phase==='playing')announce();});else announce();
 }
-function startSector(sector){
-  state.sector=sector; state.level=-1; state.wave=0; state.bossActive=false; state.bossKilled=false;
+function startSector(sector,startLevel=0){
+  state.sector=sector; state.level=-1; state.wave=startLevel*3; state.bossActive=false; state.bossKilled=false;
   state.dist=0; state.distTarget=100; boss=null;
   state.audioCueT=6+Math.random()*5;
   document.getElementById('bossHud').classList.remove('show');
@@ -839,6 +927,7 @@ function launchEncounter(entry){
   state.wave++;
   state.spawnQueue=entry.units.slice();
   state.spawnT=0;state.waveActive=true;
+  for(let i=0;i<2+entry.level;i++)spawnObstacle(entry.level,i*24);
   updateWaveHud();
 }
 function showIntermission(nextLevel){
@@ -848,15 +937,10 @@ function showIntermission(nextLevel){
   document.getElementById('intermission-kicker').textContent='Level '+state.sector+'-'+(nextLevel+1)+' // '+briefing.kicker;
   document.getElementById('intermission-title').textContent=currentSectorTheme.levels[nextLevel];
   document.getElementById('intermission-sub').textContent=briefing.directive+' // '+briefing.threat;
-  document.querySelector('.upgrade-label').textContent='Field calibration // choose one';
+  document.querySelector('.upgrade-label').textContent='Navigation solution // next level';
   route.innerHTML=[0,1,2].map(i=>`<div class="route-node ${i<nextLevel?'done':i===nextLevel?'active':''}"></div>`).join('');
-  const picks=[...UPGRADES].sort(()=>Math.random()-.5).slice(0,3);grid.innerHTML='';
-  for(const upgrade of picks){
-    const button=document.createElement('button');button.className='upgrade-card';
-    button.innerHTML=`<b>${upgrade.name}</b><span>${upgrade.desc}</span><em>${upgrade.tag}</em>`;
-    button.onclick=()=>{upgrade.apply();sfx('transition');screen.classList.add('hide');state.phase='playing';clock.getDelta();launchEncounter(sectorWaves[state.wave]);};
-    grid.appendChild(button);
-  }
+  grid.innerHTML='<button class="upgrade-card" style="grid-column:1/-1;min-height:110px"><b>Continue flight</b><span>Your installed ship hardware remains active. No temporary upgrades are issued in the field.</span><em>Launch next level</em></button>';
+  grid.querySelector('button').onclick=()=>{sfx('transition');screen.classList.add('hide');state.phase='playing';clock.getDelta();launchEncounter(sectorWaves[state.wave]);};
   screen.classList.remove('hide');grid.querySelector('button').focus();
 }
 function showSectorIntermission(nextSector){
@@ -893,7 +977,7 @@ function fire(){
     const b = boltPool.get();
     const wp = new THREE.Vector3(); gun.getWorldPosition(wp);
     b.position.copy(wp); b.position.z -= 0.8;
-    b.userData.vz = -160; b.userData.life=0;
+    b.userData.vz = -160;b.userData.vx=0;b.userData.vy=0;b.userData.target=lockedEnemy; b.userData.life=0;
   }
   state.heat = Math.min(HEAT_MAX, state.heat + HEAT_PER_SHOT*runMods.heat);
   if(tutorial.active&&tutorial.step===1&&++tutorial.shots>=4)advanceTutorial();
@@ -949,10 +1033,11 @@ function killEnemy(e){
   shedArmor(e.mesh.position,e.def.color);
   scene.remove(e.mesh);
   const i = enemies.indexOf(e); if(i>=0) enemies.splice(i,1);
+  if(lockedEnemy===e){lockedEnemy=null;document.getElementById('lockBtn').classList.remove('active');document.getElementById('lockStatus').classList.remove('show');}
   addScore(e.def.score);
   state.shake = Math.max(state.shake, 0.2);
   sfx('boom');
-  if(tutorial.active&&tutorial.step===4&&e===tutorial.target)advanceTutorial();
+  if(tutorial.active&&tutorial.step===5&&e===tutorial.target)advanceTutorial();
 }
 function enemyFire(e){
   const b = eboltPool.get();
@@ -980,7 +1065,7 @@ const ventHint = document.getElementById('venthint');
 const distFill = document.getElementById('distfill');
 const hullWrap = document.getElementById('hull');
 const bannerEl = document.getElementById('banner');
-function updateWaveHud(){ hudWave.innerHTML=tutorial.active?'TRAINING':state.bossActive?(state.sector+' &middot; WARDEN'):(state.sector+'-'+(state.level+1)+' &middot; E'+(((state.wave-1)%2)+1)+'/2'); }
+function updateWaveHud(){ hudWave.innerHTML=tutorial.active?'TRAINING':state.bossActive?(state.sector+' &middot; WARDEN'):(state.sector+'-'+(state.level+1)+' &middot; E'+(((state.wave-1)%3)+1)+'/3'); }
 function updateHull(){
   hullWrap.innerHTML='';
   for(let i=0;i<state.maxHull;i++){ const d=document.createElement('div'); d.className='pip'+(i<state.hull?'':' off'); hullWrap.appendChild(d); }
@@ -1011,13 +1096,13 @@ const SAMPLES = {
   ventbig:['assets/audio/sfx/forceField_001.ogg','assets/audio/sfx/thrusterFire_003.ogg'],
   boom:['assets/audio/sfx/explosionCrunch_002.ogg','assets/audio/sfx/explosionCrunch_004.ogg'],
   hit:['assets/audio/sfx/impactMetal_002.ogg'],
-  overheat:['assets/audio/sfx/computerNoise_001.ogg'],
+  overheat:['assets/audio/sfx/forceField_001.ogg'],
   transition:['assets/audio/sfx/doorOpen_001.ogg'],
   boss:['assets/audio/sfx/lowFrequency_explosion_001.ogg'],
   victory:['assets/audio/music/victory.ogg'],
   hover:['assets/audio/music/hover.ogg'],
   ambientEmber:['assets/audio/sfx/thrusterFire_003.ogg'],
-  ambientGrave:['assets/audio/sfx/computerNoise_001.ogg'],
+  ambientGrave:['assets/audio/sfx/forceField_001.ogg'],
   ambientForge:['assets/audio/sfx/impactMetal_002.ogg'],
   ambientCorona:['assets/audio/sfx/lowFrequency_explosion_001.ogg'],
   ambientCore:['assets/audio/sfx/forceField_001.ogg'],
@@ -1078,13 +1163,13 @@ function sfx(kind){
 }
 
 // ============================================================= GAME FLOW
-function startGame(){
+function startGame(startSectorNum=1,startLevel=0){
   tutorial.active=false;tutorial.target=null;window.__redline.god=false;
   document.getElementById('tutorialHud').classList.add('hide');
+  document.getElementById('combatActions').classList.add('show');
   document.getElementById('tutorialSkip').classList.remove('hide');
   document.getElementById('tutorialContinue').classList.add('hide');
-  Object.assign(runMods,{damage:1,cooling:1,vent:1,score:1,maxHull:4,heat:1});
-  state.maxHull=4;
+  applyShipLoadout();
   state.phase='playing'; state.score=0; state.hull=state.maxHull; state.heat=0; state.overheated=false; state.overheatT=0;
   setPaused(false);
   state.invuln=1.0; state.time=0; state.timers.length=0;
@@ -1095,13 +1180,14 @@ function startGame(){
   for(const e of [...enemies]){ scene.remove(e.mesh); } enemies.length=0;
   for(const b of [...eboltPool.live]) eboltPool.put(b);
   for(const b of [...boltPool.live]) boltPool.put(b);
+  for(const o of [...obstacles])scene.remove(o);obstacles.length=0;
   boss=null;
   document.getElementById('bossHud').classList.remove('show');
   player.position.set(0,0,PLAYER_Z);
   addScore(0); updateHull();
   document.getElementById('title').classList.add('hide');
   document.getElementById('go').classList.add('hide');
-  startSector(1);
+  startSector(startSectorNum,startLevel);
 }
 function startTutorial(){
   startGame();
@@ -1117,6 +1203,7 @@ function startTutorial(){
 }
 function gameOver(){
   state.phase='dead';
+  document.getElementById('combatActions').classList.remove('show');
   setPaused(false);
   boom(player.position, 0xff3b1f, 60, 12, 1.0); flashScreen(0.7);
   sfx('boss');
@@ -1128,18 +1215,43 @@ function gameOver(){
   after(0.9, ()=> document.getElementById('go').classList.remove('hide'));
 }
 const tutorialComplete=localStorage.getItem('redline_tutorial')==='complete';
+function openHangar(){
+  for(const slot of ['reactor','wing','drive']){
+    profile.equipped[slot]=equippedPart(slot).id;
+    const select=document.getElementById(slot+'Part');select.innerHTML=PARTS[slot].map(p=>`<option value="${p.id}" ${p.unlock>profile.unlockedLevel?'disabled':''}>${p.name}${p.unlock>profile.unlockedLevel?' // unlock at '+Math.ceil(p.unlock/3)+'-'+(((p.unlock-1)%3)+1):''}</option>`).join('');select.value=profile.equipped[slot];
+    select.onchange=()=>{profile.equipped[slot]=select.value;saveProfile();renderShipStats();};
+  }
+  renderShipStats();document.getElementById('hangar').classList.remove('hide');
+}
+function renderShipStats(){
+  const r=equippedPart('reactor'),w=equippedPart('wing'),d=equippedPart('drive');
+  const stats=[['Damage',Math.round(r.damage*100)],['Cooling',Math.round(r.cooling*100)],['Speed',Math.round(w.speed*d.speed*100)],['Vent',Math.round(d.vent*100)],['Hull',4+w.hull]];
+  document.getElementById('shipStats').innerHTML=stats.map(([n,v])=>`<div class="ship-stat"><b>${v}${n==='Hull'?'':'%'}</b><span>${n}</span></div>`).join('');
+}
+function openLevelSelect(){
+  const grid=document.getElementById('levelGrid');grid.innerHTML='';
+  SECTORS.forEach((sector,si)=>sector.levels.forEach((name,li)=>{const index=si*3+li+1,b=document.createElement('button');b.className='level-node';b.disabled=index>profile.unlockedLevel;b.innerHTML=`<b>${si+1}-${li+1}</b><span>${name}</span>`;b.onclick=()=>{document.getElementById('levelSelect').classList.add('hide');startGame(si+1,li);};grid.appendChild(b);}));
+  document.getElementById('levelSelect').classList.remove('hide');
+}
 document.getElementById('startbtn').textContent=tutorialComplete?'Launch Run':'Begin Training';
 document.getElementById('startbtn').onclick = ()=>tutorialComplete||localStorage.getItem('redline_tutorial')==='complete'?startGame():startTutorial();
 document.getElementById('trainingbtn').onclick = startTutorial;
-document.getElementById('againbtn').onclick = startGame;
+document.getElementById('againbtn').onclick = ()=>startGame();
+document.getElementById('hangarbtn').onclick=openHangar;
+document.getElementById('hangarBack').onclick=()=>{saveProfile();document.getElementById('hangar').classList.add('hide');};
+document.getElementById('levelsbtn').onclick=openLevelSelect;
+document.getElementById('levelsBack').onclick=()=>document.getElementById('levelSelect').classList.add('hide');
+document.getElementById('rollBtn').onclick=doBarrelRoll;
+document.getElementById('lockBtn').onclick=toggleLock;
 document.getElementById('tutorialSkip').onclick = ()=>{localStorage.setItem('redline_tutorial','complete');document.getElementById('startbtn').textContent='Launch Run';startGame();};
-document.getElementById('tutorialContinue').onclick = startGame;
+document.getElementById('tutorialContinue').onclick = ()=>startGame();
 document.getElementById('settingsbtn').onclick = ()=>openSettings('title');
 document.getElementById('pausesettingsbtn').onclick = ()=>openSettings('pause');
 document.getElementById('settingsbackbtn').onclick = closeSettings;
 document.getElementById('resumebtn').onclick = ()=>setPaused(false);
 document.getElementById('quitbtn').onclick = ()=>{
   setPaused(false); state.phase='title';
+  document.getElementById('combatActions').classList.remove('show');
   document.getElementById('title').classList.remove('hide');
   pauseEl.classList.remove('show');
   playMusic('menu');
@@ -1159,6 +1271,7 @@ for(const button of document.querySelectorAll('button')){
 }
 function completeRun(){
   state.phase='complete';setPaused(false);
+  document.getElementById('combatActions').classList.remove('show');
   state.best=Math.max(state.best,state.score);localStorage.setItem('redline_best',state.best);
   document.getElementById('go-title').textContent='CORE BROKEN';
   document.getElementById('finalscore').textContent=state.score.toLocaleString();
@@ -1232,7 +1345,8 @@ function update(dt){
 
 function updatePlaying(dt){
   // ----- steering
-  const sp = 15;
+  const sp = 15*(runMods.speed||1);
+  rollCooldown=Math.max(0,rollCooldown-dt);
   let mvx=0, mvy=0;
   if(keys['KeyA']||keys['ArrowLeft']) mvx-=1;
   if(keys['KeyD']||keys['ArrowRight']) mvx+=1;
@@ -1241,9 +1355,15 @@ function updatePlaying(dt){
   if(tutorial.active&&tutorial.step===0&&(mvx||mvy))advanceTutorial();
   player.position.x = THREE.MathUtils.clamp(player.position.x + mvx*sp*dt, -BOUND_X, BOUND_X);
   player.position.y = THREE.MathUtils.clamp(player.position.y + mvy*sp*dt, -BOUND_Y, BOUND_Y);
-  player.rotation.z += (-mvx*0.5 - player.rotation.z)*Math.min(1,dt*8);
+  if(rollT>0){rollT=Math.max(0,rollT-dt);const p=1-rollT/.68;player.rotation.z=rollDir*p*Math.PI*2;}
+  else player.rotation.z += (-mvx*0.5 - player.rotation.z)*Math.min(1,dt*8);
   player.rotation.x += (mvy*0.2 - player.rotation.x)*Math.min(1,dt*8);
   engineFlame.scale.y = 1 + Math.sin(state.time*40)*0.15;
+  for(const o of [...obstacles]){
+    o.position.z+=o.userData.speed*dt;o.rotation.z+=o.userData.spin*dt;
+    if(o.position.distanceTo(player.position)<o.userData.radius+.65){boom(o.position,0xb67650,16,7,.45);scene.remove(o);obstacles.splice(obstacles.indexOf(o),1);hitPlayer();continue;}
+    if(o.position.z>DESPAWN_Z+8){scene.remove(o);obstacles.splice(obstacles.indexOf(o),1);}
+  }
 
   // ----- heat / firing
   state.firing = (keys['KeyJ']||pointerFire);
@@ -1274,7 +1394,12 @@ function updatePlaying(dt){
   if(state.invuln>0){ state.invuln-=dt; player.visible = Math.floor(state.time*20)%2===0; } else player.visible=true;
 
   // ----- player bolts
-  for(const b of [...boltPool.live]){ b.position.z += b.userData.vz*dt; b.userData.life+=dt;
+  for(const b of [...boltPool.live]){
+    if(b.userData.target&&enemies.includes(b.userData.target)){
+      const target=b.userData.target.mesh.position;b.userData.vx+=(target.x-b.position.x)*dt*18;b.userData.vy+=(target.y-b.position.y)*dt*18;
+      b.userData.vx*=.92;b.userData.vy*=.92;
+    }
+    b.position.x+=b.userData.vx*dt;b.position.y+=b.userData.vy*dt;b.position.z += b.userData.vz*dt; b.userData.life+=dt;
     if(b.position.z < SPAWN_Z-10 || b.userData.life>3){ boltPool.put(b); continue; }
     // hit enemies
     for(const e of enemies){ if(b.position.distanceTo(e.mesh.position) < e.def.r){ boltPool.put(b); damageEnemy(e,1,false); boom(b.position,0x9be8ff,4,2,0.3); break; } }

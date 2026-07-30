@@ -17,13 +17,15 @@ Offense and defense share one gauge. Every fight is a tension-and-release rhythm
 | Steer | `W` `A` `S` `D` / arrows |
 | Fire | hold `J` or click |
 | Vent | `Space` |
+| Barrel roll | `K` or the HUD control |
+| Lock target | `L` or the HUD control |
 | Pause / resume | `P` or `Escape` |
 
 The game also pauses automatically when its window loses focus.
 
 The opening menu includes persistent flight settings for master audio, separate music and effects volume, camera shake, glow effects, screen flashes, particle density, render quality, and HUD brightness.
 
-First-time pilots enter a guided, playable training flight. Five verified objectives teach steering, firing, heat buildup, perfect-vent timing, and hostile attack telegraphs before handing control directly into the campaign. Training can be skipped and replayed from the title screen; completion is saved locally.
+First-time pilots enter a guided, playable training flight. Six verified objectives teach steering, firing, heat buildup, perfect-vent timing, barrel rolls, lock-on, and hostile attack telegraphs before handing control directly into the campaign. Training can be skipped and replayed from the title screen; completion is saved locally.
 
 Combat readability is reinforced with distance-scaled enemy brackets, visible attack-charge warnings, damage health bars, Warden warning frames, and high-contrast hostile projectiles.
 Environmental debris stays outside the central combat corridor and uses muted rust tones, leaving bright red-white motion exclusively for hostile attacks.
@@ -33,9 +35,11 @@ The finished presentation uses protected cockpit-style HUD panels, a dedicated W
 Multi-part procedural models give the player swept wings, armor, engine pods, intakes, and gun housings; enemy archetypes use distinct interceptor, bomber, turret, and shield chassis; and Wardens feature themed pylons with independently rotating armor rings.
 
 ## Structure
-Each sector contains three named levels and six authored encounters—two per level—followed by a themed **Warden** boss. The outer approach emphasizes mobile interceptors, the fortified interior adds bombers and gun platforms, and the Warden threshold fields elite shield formations.
+Each sector contains three named levels and nine authored encounters—three per level—followed by a themed **Warden** boss, including a guaranteed Warden at the end of Ember Reach. The outer approach emphasizes mobile interceptors and asteroid hazards, the fortified interior adds bombers, gun platforms, and structural debris, and the Warden threshold fields elite shield formations around moving gate blades.
 
-Level clears open a mission-aperture briefing where the player chooses one of three run upgrades. Upgrades can improve cooling, weapon damage, vent range, hull capacity, heat efficiency, or score output. Later levels add tougher enemies, larger landmarks, cinematic entrances, visible damage sparks, articulated enemy components, and physical armor wreckage.
+REDLINE uses permanent ship progression rather than temporary roguelike upgrades. The ship editor fits a reactor, wing frame, and drive; installed parts persist and change damage, cooling, heat efficiency, speed, vent strength, roll recovery, and hull capacity. A persistent level selector unlocks each of the campaign's 15 stages as it is reached.
+
+Level clears now provide route briefings without temporary rewards. Later levels add tougher enemies, distinct obstacle families, larger landmarks, cinematic entrances, visible damage sparks, articulated enemy components, and physical armor wreckage.
 
 The campaign arc moves through **Ember Reach**, **Grave Orbit**, **Helioforge Array**, **Corona Scar**, and **Core Threshold**. Each region has its own three-level scenery progression, atmosphere, and Warden palette.
 
