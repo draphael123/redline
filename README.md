@@ -23,6 +23,8 @@ Offense and defense share one gauge. Every fight is a tension-and-release rhythm
 
 The game also pauses automatically when its window loses focus.
 
+Gamepads use the left stick to steer, south face button to fire, east to vent, west to roll, north to lock, and Start to pause. Coarse-pointer devices receive a virtual flight stick plus dedicated fire, vent, roll, and lock controls.
+
 The opening menu includes persistent flight settings for master audio, separate music and effects volume, camera shake, glow effects, screen flashes, particle density, render quality, and HUD brightness.
 
 First-time pilots enter a guided, playable training flight. Six verified objectives teach steering, firing, heat buildup, perfect-vent timing, barrel rolls, lock-on, and hostile attack telegraphs before handing control directly into the campaign. Training can be skipped and replayed from the title screen; completion is saved locally.
@@ -37,13 +39,15 @@ Multi-part procedural models give the player swept wings, armor, engine pods, in
 ## Structure
 Each sector contains three named levels and nine authored encounters—three per level—followed by a themed **Warden** boss, including a guaranteed Warden at the end of Ember Reach. The outer approach emphasizes mobile interceptors and asteroid hazards, the fortified interior adds bombers, gun platforms, and structural debris, and the Warden threshold fields elite shield formations around moving gate blades.
 
-REDLINE uses permanent ship progression rather than temporary roguelike upgrades. The ship editor fits a reactor, wing frame, and drive; installed parts persist and change damage, cooling, heat efficiency, speed, vent strength, roll recovery, and hull capacity. A persistent level selector unlocks each of the campaign's 15 stages as it is reached.
+REDLINE uses permanent ship progression rather than temporary roguelike upgrades. The ship editor fits a reactor, wing frame, drive, weapon array, and plating package. Twenty components unlock across the campaign; installed hardware persists and changes damage, firing pattern, cooling, heat efficiency, speed, vent strength, collision resistance, roll recovery, and hull capacity. Components also alter visible wing proportions, armor, weapon emitters, reactor glow, and drive color. A persistent level selector unlocks each of the campaign's 15 stages as it is reached.
 
 Level clears now provide route briefings without temporary rewards. Later levels add tougher enemies, distinct obstacle families, larger landmarks, cinematic entrances, visible damage sparks, articulated enemy components, and physical armor wreckage.
 
 The campaign arc moves through **Ember Reach**, **Grave Orbit**, **Helioforge Array**, **Corona Scar**, and **Core Threshold**. Each region has its own three-level scenery progression, atmosphere, and Warden palette.
 
 All 15 levels have their own environment kit. Within a sector, the approach, interior, and Warden threshold use different silhouettes, landmarks, fog, exposure, particle density, movement speed, obstacle materials, and lighting accents. Examples include Ember Reach's beacon field, dead signal forest, and furnace gate; Grave Orbit's convoy, carrier ribs, and tomb ring; and Helioforge's mirrors, coolant pipes, and foundry crown. Environmental contrast remains below hostile attack contrast to preserve combat readability.
+
+Authored environmental events punctuate longer encounters: ash surges, shifting wreck fields, forge cycles, coolant vents, solar flare warnings, ring shifts, and gravity shear. Collision feedback includes brief hit-stop, stronger camera response, armor deflection, wreckage, and progressive ship scorching.
 
 Clearing Core Threshold ends the 15-level campaign with a dedicated completion state rather than recycling the final sector.
 
