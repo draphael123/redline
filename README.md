@@ -43,6 +43,8 @@ Level clears now provide route briefings without temporary rewards. Later levels
 
 The campaign arc moves through **Ember Reach**, **Grave Orbit**, **Helioforge Array**, **Corona Scar**, and **Core Threshold**. Each region has its own three-level scenery progression, atmosphere, and Warden palette.
 
+All 15 levels have their own environment kit. Within a sector, the approach, interior, and Warden threshold use different silhouettes, landmarks, fog, exposure, particle density, movement speed, obstacle materials, and lighting accents. Examples include Ember Reach's beacon field, dead signal forest, and furnace gate; Grave Orbit's convoy, carrier ribs, and tomb ring; and Helioforge's mirrors, coolant pipes, and foundry crown. Environmental contrast remains below hostile attack contrast to preserve combat readability.
+
 Clearing Core Threshold ends the 15-level campaign with a dedicated completion state rather than recycling the final sector.
 
 Each sector also has its own looping score: open ambience in Ember Reach, ominous drift through Grave Orbit, an industrial pulse in Helioforge Array, urgent momentum in Corona Scar, and a dark transmission motif at Core Threshold. The title screen, transitions, combat, vents, impacts, bosses, and sector clears have dedicated audio cues.
