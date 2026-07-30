@@ -31,9 +31,13 @@ The finished presentation uses protected cockpit-style HUD panels, a dedicated W
 Multi-part procedural models give the player swept wings, armor, engine pods, intakes, and gun housings; enemy archetypes use distinct interceptor, bomber, turret, and shield chassis; and Wardens feature themed pylons with independently rotating armor rings.
 
 ## Structure
-Each sector contains three named levels of escalating waves — darters, orb-lobbing bombers, debris turrets, and shielded elites — followed by a themed **Warden** boss. Clear a sector, patch a hull point, and push into the next region.
+Each sector contains three named levels and six authored encounters—two per level—followed by a themed **Warden** boss. The outer approach emphasizes mobile interceptors, the fortified interior adds bombers and gun platforms, and the Warden threshold fields elite shield formations.
+
+Level clears open a mission-aperture briefing where the player chooses one of three run upgrades. Upgrades can improve cooling, weapon damage, vent range, hull capacity, heat efficiency, or score output. Later levels add tougher enemies, larger landmarks, cinematic entrances, visible damage sparks, articulated enemy components, and physical armor wreckage.
 
 The campaign arc moves through **Ember Reach**, **Grave Orbit**, **Helioforge Array**, **Corona Scar**, and **Core Threshold**. Each region has its own three-level scenery progression, atmosphere, and Warden palette.
+
+Clearing Core Threshold ends the 15-level campaign with a dedicated completion state rather than recycling the final sector.
 
 Each sector also has its own looping score: open ambience in Ember Reach, ominous drift through Grave Orbit, an industrial pulse in Helioforge Array, urgent momentum in Corona Scar, and a dark transmission motif at Core Threshold. The title screen, transitions, combat, vents, impacts, bosses, and sector clears have dedicated audio cues.
 

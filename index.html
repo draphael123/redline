@@ -133,7 +133,25 @@
   .range-control { display:flex; align-items:center; gap:10px; }
   .range-control output { width:34px; color:var(--cyan); font-size:11px; font-weight:800; text-align:right; }
   .panel .menu-link { width:100%; margin-top:22px; }
-  @media (max-width:760px) { .title-console{display:block;width:min(88vw,520px)} .solar-aperture{width:100vw;right:-45vw;opacity:.48} .mission-copy{font-size:12px} #title .logo{font-size:clamp(58px,18vw,100px)} }
+  #intermission { z-index:35; background:radial-gradient(circle at 50% 45%,rgba(39,11,9,.82),rgba(4,3,6,.97) 62%); }
+  .mission-aperture { position:absolute; width:min(82vmin,760px); aspect-ratio:1; border-radius:50%; border:1px solid rgba(255,112,50,.22); box-shadow:inset 0 0 90px rgba(255,50,15,.1),0 0 70px rgba(255,56,20,.12); }
+  .mission-aperture::before { content:""; position:absolute; inset:8%; border-radius:50%; border:1px dashed rgba(70,225,244,.22); animation:orbitSpin 24s linear infinite; }
+  .intermission-console { position:relative; z-index:1; width:min(92vw,960px); text-align:left; }
+  .stage-route { display:flex; align-items:center; gap:8px; margin:16px 0 25px; }
+  .route-node { flex:1; height:5px; background:rgba(255,255,255,.1); position:relative; }
+  .route-node::after { content:""; position:absolute; right:-5px; top:-4px; width:13px; height:13px; transform:rotate(45deg); background:#34201e; border:1px solid rgba(255,179,122,.35); }
+  .route-node.done { background:linear-gradient(90deg,var(--cyan),#fff); box-shadow:0 0 12px rgba(34,230,255,.5); }
+  .route-node.active { background:linear-gradient(90deg,var(--hot),#ffd23b); box-shadow:0 0 16px rgba(255,70,30,.7); }
+  .intermission-title { font-size:clamp(36px,7vw,78px); line-height:.92; letter-spacing:7px; text-transform:uppercase; color:#fff5dd; text-shadow:0 0 35px rgba(255,70,25,.5); }
+  .intermission-sub { margin-top:10px; color:#ffb37a; letter-spacing:5px; text-transform:uppercase; font-size:12px; }
+  .upgrade-label { margin-top:28px; color:var(--cyan); font-size:10px; letter-spacing:4px; text-transform:uppercase; }
+  .upgrade-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:12px; }
+  .upgrade-card { pointer-events:auto; cursor:pointer; min-height:154px; padding:20px; color:#fff0e6; text-align:left; background:linear-gradient(145deg,rgba(43,16,17,.86),rgba(8,7,10,.94)); border:1px solid rgba(255,137,74,.26); clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,0 100%); transition:transform .16s,border-color .16s,background .16s; }
+  .upgrade-card:hover,.upgrade-card:focus-visible { transform:translateY(-4px); border-color:var(--cyan); background:linear-gradient(145deg,rgba(60,23,20,.94),rgba(9,12,15,.98)); outline:none; }
+  .upgrade-card b { display:block; color:#ffd56e; font-size:15px; letter-spacing:2px; text-transform:uppercase; }
+  .upgrade-card span { display:block; margin-top:10px; color:#cfaaa0; font-size:12px; line-height:1.5; }
+  .upgrade-card em { display:block; margin-top:16px; color:var(--cyan); font:normal 9px/1 "Segoe UI",sans-serif; letter-spacing:3px; text-transform:uppercase; }
+  @media (max-width:760px) { .title-console{display:block;width:min(88vw,520px)} .solar-aperture{width:100vw;right:-45vw;opacity:.48} .mission-copy{font-size:12px} #title .logo{font-size:clamp(58px,18vw,100px)} .upgrade-grid{grid-template-columns:1fr}.upgrade-card{min-height:0}.intermission-console{max-height:90vh;overflow:auto;padding:20px} }
   @media (max-width:620px) { .corner{margin:8px;padding:8px 9px;min-width:110px}.val{font-size:20px}#wavewrap .val{font-size:14px}#distwrap{top:9px;width:34vw}#heatwrap{width:90vw;bottom:10px}#bossHud{top:52px;width:78vw} }
   @media (max-height:760px) { #title .logo{font-size:clamp(55px,9vw,100px)} .mission-copy{margin-top:10px}.record{margin-top:12px}.controls{margin-top:12px!important}.menu-actions{margin-top:14px}.panel{padding:22px}.setting{padding:11px 0} }
   @media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition-duration:.01ms!important; animation-duration:.01ms!important; } }
@@ -175,6 +193,18 @@
   </div>
 </div>
 <div id="heatfx" aria-hidden="true"></div>
+
+<div class="screen hide" id="intermission">
+  <div class="mission-aperture" aria-hidden="true"></div>
+  <div class="intermission-console">
+    <div class="eyebrow" id="intermission-kicker">Stage secured</div>
+    <div class="intermission-title" id="intermission-title">Cinder Gate</div>
+    <div class="intermission-sub" id="intermission-sub">Choose one system calibration before the breach</div>
+    <div class="stage-route" id="stage-route"></div>
+    <div class="upgrade-label">Field calibration // choose one</div>
+    <div class="upgrade-grid" id="upgrade-grid"></div>
+  </div>
+</div>
 
 <div class="screen" id="title">
   <div class="solar-aperture" aria-hidden="true"></div>
@@ -246,7 +276,7 @@
 </div>
 
 <div class="screen hide" id="go">
-  <div class="logo">DOWN</div>
+  <div class="logo" id="go-title">DOWN</div>
   <div class="statline">Score <span class="n" id="finalscore">0</span></div>
   <div class="statline" style="font-size:13px;opacity:.8">Best <span id="bestscore">0</span> &nbsp;&middot;&nbsp; Reached <span id="reached">Sector 1</span></div>
   <button class="btn" id="againbtn">Re-Deploy</button>
@@ -391,6 +421,11 @@ const SECTORS = [
   {name:'CORONA SCAR',key:'corona',sun:.42,fog:.015,dust:0xb64a42,levels:['MAGNETIC WAKE','FLARE TRENCH','RUPTURE EDGE']},
   {name:'CORE THRESHOLD',key:'core',sun:.5,fog:.0,dust:0x817a77,levels:['ECLIPSE LINE','BLACK RING','EVENT HORIZON']},
 ];
+const LEVEL_BRIEFINGS = [
+  {kicker:'Outer approach',directive:'Break the patrol line',threat:'Mobile interceptors'},
+  {kicker:'Fortified interior',directive:'Crack the defensive screen',threat:'Bombers and gun platforms'},
+  {kicker:'Warden threshold',directive:'Breach the command perimeter',threat:'Shielded elite formations'},
+];
 let currentSectorTheme=SECTORS[0], levelScenery=[];
 function makeSceneryProp(key,i){
   const g=new THREE.Group(), dark=new THREE.MeshStandardMaterial({color:0x19171b,metalness:.85,roughness:.42}), hot=new THREE.MeshBasicMaterial({color:key==='forge'?0x34dce8:0xff6930});
@@ -411,13 +446,30 @@ function makeSceneryProp(key,i){
   }
   return g;
 }
+function makeLevelLandmark(theme,levelIndex){
+  const g=new THREE.Group(),accent=theme.key==='forge'?0x41e5ee:theme.key==='core'?0xa4f4ff:0xff6b32;
+  const metal=new THREE.MeshStandardMaterial({color:0x17161b,metalness:.9,roughness:.32});
+  if(levelIndex===1){
+    const spine=new THREE.Mesh(new THREE.BoxGeometry(2.2,18,3.2),metal);g.add(spine);
+    for(const y of [-7,-3.5,0,3.5,7]){const rib=new THREE.Mesh(new THREE.BoxGeometry(10,.32,1.1),metal);rib.position.y=y;g.add(rib);}
+    const signal=new THREE.Mesh(new THREE.BoxGeometry(.24,16,.3),new THREE.MeshBasicMaterial({color:accent}));signal.position.z=1.7;g.add(signal);
+  }else{
+    for(let i=0;i<3;i++){const ring=new THREE.Mesh(new THREE.TorusGeometry(9+i*2,.34+i*.08,8,48),new THREE.MeshStandardMaterial({color:i===1?accent:0x19171d,metalness:.82,roughness:.28,emissive:accent,emissiveIntensity:i===1?.35:.05}));ring.rotation.x=Math.PI/2;ring.position.z=i*3;g.add(ring);}
+    for(let i=0;i<6;i++){const a=i*Math.PI/3,p=new THREE.Mesh(new THREE.BoxGeometry(.7,1.1,6),metal);p.position.set(Math.cos(a)*10.5,Math.sin(a)*10.5,2);p.rotation.z=a;g.add(p);}
+  }
+  return g;
+}
 function setLevelScenery(theme,levelIndex){
   for(const o of levelScenery){scene.remove(o);o.traverse(n=>{if(n.geometry)n.geometry.dispose();if(n.material)n.material.dispose();});} levelScenery.length=0;
   const count=4+levelIndex*2;
   for(let i=0;i<count;i++){
     const o=makeSceneryProp(theme.key,i),side=i%2?-1:1;
+    o.scale.setScalar(1+levelIndex*.22);
     o.position.set(side*(16+Math.random()*18),(Math.random()-.5)*18,-55-Math.random()*145);
     o.rotation.z=Math.random()*Math.PI;o.userData.speed=6+Math.random()*5;o.userData.side=side;scene.add(o);levelScenery.push(o);
+  }
+  if(levelIndex>0){
+    const landmark=makeLevelLandmark(theme,levelIndex);landmark.position.set(levelIndex===1?18:0,0,-145);landmark.userData.speed=levelIndex===2?4.5:5.5;landmark.userData.side=levelIndex===1?1:0;scene.add(landmark);levelScenery.push(landmark);
   }
   dust.material.color.setHex(theme.dust); speedDust.material.color.setHex(theme.dust);
 }
@@ -476,6 +528,7 @@ for (const b of boltPool.free) b.rotation.x = Math.PI*0.5;
 
 // explosion particles (points bursts)
 const bursts = [];
+const wreckage = [];
 function boom(pos, color, count, spread, size){
   const p = new Float32Array(count*3), v=[];
   for(let i=0;i<count;i++){ p[i*3]=pos.x; p[i*3+1]=pos.y; p[i*3+2]=pos.z;
@@ -494,6 +547,14 @@ function ventRing(pos, big){
     const mat = new THREE.MeshBasicMaterial({ color: big?(i===0?0xffffff:0x62f4ff):0x22e6ff, transparent:true, opacity:0.9-i*.18, side:THREE.DoubleSide, blending:THREE.AdditiveBlending, depthWrite:false });
     const m = new THREE.Mesh(geo, mat); m.position.copy(pos); m.rotation.x = Math.PI*0.5; scene.add(m);
     rings.push({ m, life:-i*.055, ttl: big?0.82:0.6, max:(big?28:17)-i*2 });
+  }
+}
+function shedArmor(pos,color,large=false){
+  const count=large?12:5;
+  for(let i=0;i<count;i++){
+    const shard=new THREE.Mesh(new THREE.TetrahedronGeometry(large?.32:.16,0),new THREE.MeshStandardMaterial({color:i%3?0x29242a:color,metalness:.8,roughness:.35,emissive:color,emissiveIntensity:.12}));
+    shard.position.copy(pos);shard.scale.set(1+Math.random()*1.4,.4+Math.random(),1+Math.random()*1.8);scene.add(shard);
+    wreckage.push({mesh:shard,v:new THREE.Vector3((Math.random()-.5)*(large?15:8),(Math.random()-.5)*(large?15:8),5+Math.random()*14),spin:new THREE.Vector3(Math.random()*4,Math.random()*4,Math.random()*4),life:0,ttl:large?1.8:1.15});
   }
 }
 
@@ -552,6 +613,8 @@ function buildEnemyMesh(type){
   }
   const beacon=new THREE.Mesh(new THREE.SphereGeometry(.16,8,8),new THREE.MeshBasicMaterial({color:type==='shield'?0x74efff:0xffd06a}));
   beacon.position.z=-.72; g.add(beacon); g.userData.beacon=beacon;
+  g.userData.hullMaterial=hull;
+  g.userData.movingParts=g.children.filter(n=>n.isMesh&&n.material===dark);
   addThreatUI(g,type);
   return g;
 }
@@ -560,8 +623,9 @@ function spawnEnemy(type, x, y){
   const mesh = buildEnemyMesh(type);
   mesh.position.set(x, y, SPAWN_Z - Math.random()*20);
   scene.add(mesh);
-  enemies.push({ type, mesh, hp:def.hp, def, fireT: def.fire*(0.4+Math.random()*0.6),
-    phase:Math.random()*Math.PI*2, baseX:x, baseY:y, shield:type==='shield'?3:0, stagger:0 });
+  const levelScale=1+state.level*.16;
+  enemies.push({ type, mesh, hp:def.hp*levelScale, maxhp:def.hp*levelScale, def, fireT: def.fire*(0.4+Math.random()*0.6),
+    phase:Math.random()*Math.PI*2, baseX:x, baseY:y, shield:type==='shield'?3+state.level:0, stagger:0, sparkT:.2+Math.random() });
 }
 
 // boss
@@ -598,8 +662,17 @@ const state = {
   heat:0, overheatT:0, overheated:false, fireT:0, firing:false,
   sector:1, level:0, wave:0, waveEnemies:0, spawnQueue:[], spawnT:0, waveActive:false,
   dist:0, distTarget:100, bossActive:false, bossKilled:false, invuln:0,
-  shake:0, time:0, audioCueT:8, timers:[],
+  shake:0, time:0, audioCueT:8, cinematicT:0, timers:[],
 };
+const runMods={damage:1,cooling:1,vent:1,score:1,maxHull:4,heat:1};
+const UPGRADES=[
+  {name:'Cryo coils',desc:'Passive weapon cooling increases by 22%.',tag:'Thermal control',apply:()=>runMods.cooling*=1.22},
+  {name:'Lance focus',desc:'Primary bolts deal 25% more damage.',tag:'Weapon output',apply:()=>runMods.damage*=1.25},
+  {name:'Wide purge',desc:'Vent radius and disruption strength increase.',tag:'Defensive burst',apply:()=>runMods.vent*=1.2},
+  {name:'Reactive plate',desc:'Add one maximum hull point and repair one.',tag:'Survivability',apply:()=>{runMods.maxHull++;state.maxHull=runMods.maxHull;state.hull=Math.min(state.maxHull,state.hull+1);updateHull();}},
+  {name:'Hunter relay',desc:'All combat score gains increase by 20%.',tag:'Run score',apply:()=>runMods.score*=1.2},
+  {name:'Heat sink',desc:'Shots generate 12% less weapon heat.',tag:'Fire discipline',apply:()=>runMods.heat*=.88},
+];
 // in-game scheduler (dt-based, survives tab throttling — unlike setTimeout)
 function after(sec, fn){ state.timers.push({ t:sec, fn }); }
 window.__redline = { state, enemies, get boss(){return boss;}, kill(){ state.hull=0; }, god:false, addScore:(n)=>state.score+=n,
@@ -660,23 +733,23 @@ document.addEventListener('visibilitychange', ()=>{ if(document.hidden && state.
 
 // ============================================================= WAVE DIRECTOR
 function buildSector(sector){
-  // returns array of waves; each wave = array of {type,x,y}
   const waves = [];
   const cols = [-5,-2.5,0,2.5,5];
-  const wcount = 2 + sector;            // waves before boss
-  for (let w=0; w<wcount; w++){
+  for(let level=0;level<3;level++)for(let encounter=0;encounter<2;encounter++){
+    const w=level*2+encounter;
     const wave=[]; const n = 3 + sector + w;
     for (let i=0;i<n;i++){
-      let type='darter';
+      let type=level===0?'darter':level===1?'turret':'shield';
       const roll=Math.random();
-      if (w>=1 && roll>0.82) type='shield';
-      else if (roll>0.62) type='bomber';
-      else if (roll>0.4) type='turret';
-      const x = cols[(i+w)%cols.length] + (Math.random()-.5)*1.5;
-      const y = (Math.random()-.5)*5;
+      if(level===0){if(roll>.76)type='bomber';else if(encounter&&roll>.55)type='turret';}
+      if(level===1){if(roll>.72)type='shield';else if(roll>.34)type='bomber';}
+      if(level===2){if(roll>.66)type='shield';else if(roll>.3)type=encounter?'bomber':'turret';else type='darter';}
+      const formation=level===0?Math.sin(i*.9)*2.2:level===1?(i%2?2.4:-2.4):Math.cos(i*Math.PI/3)*3.5;
+      const x=cols[(i+w)%cols.length]*.55+formation+(Math.random()-.5)*.7;
+      const y=level===2?Math.sin(i*Math.PI/3)*2.6:(Math.random()-.5)*5;
       wave.push({type,x,y});
     }
-    waves.push(wave);
+    waves.push({level,encounter,units:wave});
   }
   return waves;
 }
@@ -685,6 +758,7 @@ function sectorThemeFor(sector){return SECTORS[Math.min(sector-1,SECTORS.length-
 function enterLevel(levelIndex,delayed=false){
   if(state.level===levelIndex)return;
   state.level=levelIndex; currentSectorTheme=sectorThemeFor(state.sector);
+  state.cinematicT=2.1;
   sunHue=Math.min(.5,currentSectorTheme.sun+levelIndex*.035);
   setLevelScenery(currentSectorTheme,levelIndex);
   sfx('transition');
@@ -702,15 +776,48 @@ function startSector(sector){
   banner('SECTOR '+sector, currentSectorTheme.name);
   nextWave();
 }
+function launchEncounter(entry){
+  enterLevel(entry.level,state.wave===0);
+  state.wave++;
+  state.spawnQueue=entry.units.slice();
+  state.spawnT=0;state.waveActive=true;
+  updateWaveHud();
+}
+function showIntermission(nextLevel){
+  state.phase='intermission';pointerFire=false;
+  const screen=document.getElementById('intermission'),route=document.getElementById('stage-route'),grid=document.getElementById('upgrade-grid');
+  const briefing=LEVEL_BRIEFINGS[nextLevel];
+  document.getElementById('intermission-kicker').textContent='Level '+state.sector+'-'+(nextLevel+1)+' // '+briefing.kicker;
+  document.getElementById('intermission-title').textContent=currentSectorTheme.levels[nextLevel];
+  document.getElementById('intermission-sub').textContent=briefing.directive+' // '+briefing.threat;
+  document.querySelector('.upgrade-label').textContent='Field calibration // choose one';
+  route.innerHTML=[0,1,2].map(i=>`<div class="route-node ${i<nextLevel?'done':i===nextLevel?'active':''}"></div>`).join('');
+  const picks=[...UPGRADES].sort(()=>Math.random()-.5).slice(0,3);grid.innerHTML='';
+  for(const upgrade of picks){
+    const button=document.createElement('button');button.className='upgrade-card';
+    button.innerHTML=`<b>${upgrade.name}</b><span>${upgrade.desc}</span><em>${upgrade.tag}</em>`;
+    button.onclick=()=>{upgrade.apply();sfx('transition');screen.classList.add('hide');state.phase='playing';clock.getDelta();launchEncounter(sectorWaves[state.wave]);};
+    grid.appendChild(button);
+  }
+  screen.classList.remove('hide');grid.querySelector('button').focus();
+}
+function showSectorIntermission(nextSector){
+  state.phase='intermission';pointerFire=false;
+  const screen=document.getElementById('intermission'),route=document.getElementById('stage-route'),grid=document.getElementById('upgrade-grid'),next=sectorThemeFor(nextSector);
+  document.getElementById('intermission-kicker').textContent='Sector '+state.sector+' secured // route unlocked';
+  document.getElementById('intermission-title').textContent=next.name;
+  document.getElementById('intermission-sub').textContent='Next descent vector // '+next.levels[0];
+  route.innerHTML=SECTORS.map((_,i)=>`<div class="route-node ${i<nextSector-1?'done':i===nextSector-1?'active':''}"></div>`).join('');
+  document.querySelector('.upgrade-label').textContent='Navigation solution // next sector';
+  grid.innerHTML='<button class="upgrade-card" style="grid-column:1/-1;min-height:110px"><b>Commit descent</b><span>Carry current calibrations into the next sector. One hull point has been repaired.</span><em>Launch sector '+nextSector+'</em></button>';
+  grid.querySelector('button').onclick=()=>{screen.classList.add('hide');state.phase='playing';clock.getDelta();startSector(nextSector);};
+  screen.classList.remove('hide');grid.querySelector('button').focus();
+}
 function nextWave(){
   if (state.wave >= sectorWaves.length){ beginBoss(); return; }
-  const nextLevel=Math.min(2,Math.floor((state.wave/sectorWaves.length)*3));
-  enterLevel(nextLevel,state.wave===0);
-  const wave = sectorWaves[state.wave];
-  state.wave++;
-  state.spawnQueue = wave.slice();
-  state.spawnT = 0; state.waveActive = true;
-  updateWaveHud();
+  const entry=sectorWaves[state.wave];
+  if(state.level>=0&&entry.level!==state.level){showIntermission(entry.level);return;}
+  launchEncounter(entry);
 }
 function beginBoss(){
   state.bossActive = true; state.waveActive=false;
@@ -730,7 +837,7 @@ function fire(){
     b.position.copy(wp); b.position.z -= 0.8;
     b.userData.vz = -160; b.userData.life=0;
   }
-  state.heat = Math.min(HEAT_MAX, state.heat + HEAT_PER_SHOT);
+  state.heat = Math.min(HEAT_MAX, state.heat + HEAT_PER_SHOT*runMods.heat);
   if (state.heat >= HEAT_MAX){ triggerOverheat(); }
   sfx('shoot');
 }
@@ -745,7 +852,7 @@ function doVent(){
   if (state.overheated){ return; }            // can't vent while cooked
   const perfect = state.heat >= REDLINE;
   const big = perfect;
-  const radius = big ? 30 : 18;
+  const radius = (big ? 30 : 18)*runMods.vent;
   // clear enemy bullets within radius
   const pp = player.position;
   for (const b of [...eboltPool.live]){
@@ -768,6 +875,7 @@ function doVent(){
   showVentFeedback(perfect);
 }
 function damageEnemy(e, dmg, fromVent){
+  if(!fromVent)dmg*=runMods.damage;
   if (e.type==='shield' && e.shield>0 && !fromVent){
     e.shield -= dmg;
     if (e.shield<=0 && e.mesh.userData.shieldMesh){ e.mesh.userData.shieldMesh.visible=false; boom(e.mesh.position,0x33bbff,14,5,0.5); }
@@ -778,6 +886,7 @@ function damageEnemy(e, dmg, fromVent){
 }
 function killEnemy(e){
   boom(e.mesh.position, e.def.color, 20, 6, 0.6);
+  shedArmor(e.mesh.position,e.def.color);
   scene.remove(e.mesh);
   const i = enemies.indexOf(e); if(i>=0) enemies.splice(i,1);
   addScore(e.def.score);
@@ -802,7 +911,7 @@ function hitPlayer(){
 }
 
 // ============================================================= SCORE / HUD
-function addScore(n){ state.score += n; hudScore.textContent = state.score.toLocaleString(); }
+function addScore(n){ state.score += Math.round(n*runMods.score); hudScore.textContent = state.score.toLocaleString(); }
 const hudScore = document.querySelector('#score .val');
 const hudWave = document.querySelector('#wavewrap .val');
 const heatFill = document.getElementById('heatfill');
@@ -810,7 +919,7 @@ const ventHint = document.getElementById('venthint');
 const distFill = document.getElementById('distfill');
 const hullWrap = document.getElementById('hull');
 const bannerEl = document.getElementById('banner');
-function updateWaveHud(){ hudWave.innerHTML = state.bossActive?(state.sector+' &middot; WARDEN'):(state.sector+'-'+(state.level+1)+' &middot; W'+state.wave); }
+function updateWaveHud(){ hudWave.innerHTML = state.bossActive?(state.sector+' &middot; WARDEN'):(state.sector+'-'+(state.level+1)+' &middot; E'+(((state.wave-1)%2)+1)+'/2'); }
 function updateHull(){
   hullWrap.innerHTML='';
   for(let i=0;i<state.maxHull;i++){ const d=document.createElement('div'); d.className='pip'+(i<state.hull?'':' off'); hullWrap.appendChild(d); }
@@ -909,10 +1018,14 @@ function sfx(kind){
 
 // ============================================================= GAME FLOW
 function startGame(){
+  Object.assign(runMods,{damage:1,cooling:1,vent:1,score:1,maxHull:4,heat:1});
+  state.maxHull=4;
   state.phase='playing'; state.score=0; state.hull=state.maxHull; state.heat=0; state.overheated=false; state.overheatT=0;
   setPaused(false);
   state.invuln=1.0; state.time=0; state.timers.length=0;
   document.getElementById('overheat').classList.remove('show');
+  document.getElementById('go-title').textContent='DOWN';
+  document.querySelector('#go .hint').textContent='Perfect-vent your way deeper next time.';
   // clear field
   for(const e of [...enemies]){ scene.remove(e.mesh); } enemies.length=0;
   for(const b of [...eboltPool.live]) eboltPool.put(b);
@@ -962,6 +1075,16 @@ document.getElementById('titlebest').textContent = state.best.toLocaleString();
 for(const button of document.querySelectorAll('button')){
   button.addEventListener('pointerenter',()=>sfx('hover'));
 }
+function completeRun(){
+  state.phase='complete';setPaused(false);
+  state.best=Math.max(state.best,state.score);localStorage.setItem('redline_best',state.best);
+  document.getElementById('go-title').textContent='CORE BROKEN';
+  document.getElementById('finalscore').textContent=state.score.toLocaleString();
+  document.getElementById('bestscore').textContent=state.best.toLocaleString();
+  document.getElementById('reached').textContent='All 15 levels cleared';
+  document.querySelector('#go .hint').textContent='The interdiction line is open.';
+  document.getElementById('go').classList.remove('hide');playMusic('menu');
+}
 
 // ============================================================= UPDATE
 const clock = new THREE.Clock();
@@ -1003,6 +1126,11 @@ function update(dt){
     for(let i=0;i<bu.v.length;i++){ p[i*3]+=bu.v[i].x*dt; p[i*3+1]+=bu.v[i].y*dt; p[i*3+2]+=bu.v[i].z*dt; }
     bu.pts.geometry.attributes.position.needsUpdate=true; bu.pts.material.opacity=Math.max(0,1-bu.life/bu.ttl);
     if(bu.life>=bu.ttl){ scene.remove(bu.pts); bu.pts.geometry.dispose(); bursts.splice(bursts.indexOf(bu),1); } }
+  for(const w of [...wreckage]){
+    w.life+=dt;w.v.y-=4*dt;w.mesh.position.addScaledVector(w.v,dt);w.mesh.rotation.x+=w.spin.x*dt;w.mesh.rotation.y+=w.spin.y*dt;w.mesh.rotation.z+=w.spin.z*dt;
+    w.mesh.material.opacity=Math.max(0,1-w.life/w.ttl);w.mesh.material.transparent=true;
+    if(w.life>=w.ttl){scene.remove(w.mesh);w.mesh.geometry.dispose();w.mesh.material.dispose();wreckage.splice(wreckage.indexOf(w),1);}
+  }
   // rings
   for(const r of [...rings]){ r.life+=dt; if(r.life<0)continue; const s=1+(r.life/r.ttl)*r.max; r.m.scale.set(s,s,s); r.m.material.opacity=Math.max(0,0.9*(1-r.life/r.ttl));
     if(r.life>=r.ttl){ scene.remove(r.m); r.m.geometry.dispose(); rings.splice(rings.indexOf(r),1); } }
@@ -1011,9 +1139,12 @@ function update(dt){
 
   // camera shake + follow
   let sx=0, sy=0; if(state.shake>0){ state.shake=Math.max(0,state.shake-dt*2.2); sx=(Math.random()-.5)*state.shake*settings.shake; sy=(Math.random()-.5)*state.shake*settings.shake; }
-  const tx = player.position.x*0.35, ty = 2.4 + player.position.y*0.3;
+  if(state.cinematicT>0)state.cinematicT=Math.max(0,state.cinematicT-dt);
+  const cinema=THREE.MathUtils.smoothstep(state.cinematicT,0,2.1);
+  const tx = player.position.x*0.35+(state.cinematicT>0?-4.2*cinema:0), ty = 2.4 + player.position.y*0.3+(state.cinematicT>0?2.2*cinema:0);
   camera.position.x += (tx+sx - camera.position.x)*Math.min(1,dt*6);
   camera.position.y += (ty+sy - camera.position.y)*Math.min(1,dt*6);
+  camera.position.z += ((PLAYER_Z+8.5+(state.cinematicT>0?4.5*cinema:0))-camera.position.z)*Math.min(1,dt*5);
   camera.lookAt(player.position.x*0.5, player.position.y*0.4, -18);
 }
 
@@ -1039,7 +1170,7 @@ function updatePlaying(dt){
   } else {
     state.fireT -= dt;
     if(state.firing && state.fireT<=0) fire();
-    if(!state.firing) state.heat = Math.max(0, state.heat - HEAT_COOL*dt);
+    if(!state.firing) state.heat = Math.max(0, state.heat - HEAT_COOL*runMods.cooling*dt);
   }
   // barrel glow color from heat
   const h = state.heat/HEAT_MAX;
@@ -1064,7 +1195,7 @@ function updatePlaying(dt){
     // hit enemies
     for(const e of enemies){ if(b.position.distanceTo(e.mesh.position) < e.def.r){ boltPool.put(b); damageEnemy(e,1,false); boom(b.position,0x9be8ff,4,2,0.3); break; } }
     if(!b.visible) continue;
-    if(boss){ if(b.position.distanceTo(boss.mesh.position)<3.4){ boltPool.put(b); boss.hp-=1; boom(b.position,0xffd23b,4,2,0.3); } }
+    if(boss){ if(b.position.distanceTo(boss.mesh.position)<3.4){ boltPool.put(b); boss.hp-=runMods.damage; boom(b.position,0xffd23b,4,2,0.3); } }
   }
   // ----- enemy bolts
   for(const b of [...eboltPool.live]){ b.position.x+=b.userData.vx*dt; b.position.y+=b.userData.vy*dt; b.position.z+=b.userData.vz*dt; b.userData.life+=dt;
@@ -1085,7 +1216,13 @@ function updatePlaying(dt){
     else if(e.type==='turret'){ m.lookAt(player.position); }
     else if(e.type==='shield'){ m.position.x += (player.position.x - m.position.x)*Math.min(1,dt*0.6); m.lookAt(player.position); }
     m.rotation.z += dt*0.5;
-    const marker=m.userData.marker, hpRatio=Math.max(0,e.hp/e.def.hp), markerScale=THREE.MathUtils.clamp(Math.abs(m.position.z)/55,1,2.5);
+    const marker=m.userData.marker, hpRatio=Math.max(0,e.hp/e.maxhp), markerScale=THREE.MathUtils.clamp(Math.abs(m.position.z)/55,1,2.5);
+    for(let i=0;i<m.userData.movingParts.length;i++){
+      const part=m.userData.movingParts[i];
+      part.rotation.z+=dt*(i%2?1:-1)*(.18+state.level*.08);
+    }
+    m.userData.hullMaterial.emissiveIntensity=.16+(1-hpRatio)*.75;
+    if(hpRatio<.45){e.sparkT-=dt;if(e.sparkT<=0){boom(m.position,0xff9c42,3,1.4,.18);e.sparkT=.18+Math.random()*.35;}}
     marker.scale.setScalar(3.5*markerScale);
     m.userData.contrast.scale.setScalar(3.2*markerScale);
     const damaged=hpRatio<1 || (e.type==='shield'&&e.shield<3);
@@ -1139,12 +1276,13 @@ function updatePlaying(dt){
     document.getElementById('bossFill').style.width = (100*boss.hp/boss.maxhp)+'%';
     if(boss.hp<=0){ // dead
       for(let k=0;k<5;k++) setTimeout(()=>boom(boss.mesh.position, 0xffd23b, 30, 10, 1.0), k*120);
+      shedArmor(boss.mesh.position,boss.accent,true);
       scene.remove(boss.mesh); addScore(2000+state.sector*500); state.shake=1.2; flashScreen(0.8); boss=null;
       document.getElementById('bossHud').classList.remove('show');
       state.bossKilled=true; state.bossActive=false;
       sfx('victory');
       banner('SECTOR CLEAR', 'PUSHING DEEPER');
-      after(2.6, ()=>{ if(state.phase==='playing'){ if(state.hull<state.maxHull){state.hull++; updateHull();} startSector(state.sector+1); } });
+      after(2.6, ()=>{ if(state.phase==='playing'){ if(state.hull<state.maxHull){state.hull++;updateHull();} if(state.sector>=SECTORS.length)completeRun();else showSectorIntermission(state.sector+1); } });
     }
   }
   updateWaveHud();
