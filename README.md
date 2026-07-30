@@ -29,7 +29,9 @@ Environmental debris stays outside the central combat corridor and uses muted ru
 The finished presentation uses protected cockpit-style HUD panels, a dedicated Warden integrity display, soft layered solar particles, controlled bloom and exposure, responsive layouts, and a shared solar-aperture language across title, pause, and failure states.
 
 ## Structure
-Sectors of escalating waves — darters, orb-lobbing bombers, debris turrets, and shielded elites — each capped by a **Warden** boss. Clear a sector, patch a hull point, push deeper. Chase the high score.
+Each sector contains three named levels of escalating waves — darters, orb-lobbing bombers, debris turrets, and shielded elites — followed by a themed **Warden** boss. Clear a sector, patch a hull point, and push into the next region.
+
+The campaign arc moves through **Ember Reach**, **Grave Orbit**, **Helioforge Array**, **Corona Scar**, and **Core Threshold**. Each region has its own three-level scenery progression, atmosphere, and Warden palette.
 
 ## Tech
 Single-file [Three.js](https://threejs.org/) (r161) with `UnrealBloomPass`. No build step — open `index.html` or serve statically.
