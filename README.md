@@ -25,6 +25,8 @@ The opening menu includes persistent flight settings for sound, camera shake, gl
 
 Combat readability is reinforced with distance-scaled enemy brackets, visible attack-charge warnings, damage health bars, Warden warning frames, and high-contrast hostile projectiles.
 
+The finished presentation uses protected cockpit-style HUD panels, a dedicated Warden integrity display, soft layered solar particles, controlled bloom and exposure, responsive layouts, and a shared solar-aperture language across title, pause, and failure states.
+
 ## Structure
 Sectors of escalating waves — darters, orb-lobbing bombers, debris turrets, and shielded elites — each capped by a **Warden** boss. Clear a sector, patch a hull point, push deeper. Chase the high score.
 

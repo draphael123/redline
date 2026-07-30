@@ -21,7 +21,7 @@
   #reticle::before,#reticle::after { content:""; position:absolute; inset:0; border:1px solid rgba(110,235,255,.7); clip-path:polygon(0 0,30% 0,30% 2%,2% 2%,2% 30%,0 30%,0 0,70% 0,100% 0,100% 30%,98% 30%,98% 2%,70% 2%,70% 0,0 70%,2% 70%,2% 98%,30% 98%,30% 100%,0 100%,0 70%,70% 100%,70% 98%,98% 98%,98% 70%,100% 70%,100% 100%,70% 100%); }
   #reticle::after { inset:21px; border-radius:50%; clip-path:none; border-color:rgba(255,210,110,.7); }
   #reticle.hot { opacity:.9; transform:translate(-50%,-50%) scale(1.12); filter:drop-shadow(0 0 8px var(--hot)); }
-  .corner { position:absolute; padding:14px 18px; }
+  .corner { position:absolute; margin:14px; padding:10px 13px; min-width:138px; background:linear-gradient(135deg,rgba(9,5,8,.72),rgba(42,9,7,.3)); border:1px solid rgba(255,174,112,.14); backdrop-filter:blur(3px); clip-path:polygon(0 0,calc(100% - 13px) 0,100% 13px,100% 100%,0 100%); }
   #topleft { top:0; left:0; }
   #topright { top:0; right:0; text-align:right; }
   .lbl { font-size:11px; letter-spacing:3px; opacity:.6; text-transform:uppercase; }
@@ -30,7 +30,7 @@
   #wavewrap .val { color:#ffb37a; font-size:18px; }
 
   /* heat gauge bottom-center */
-  #heatwrap { position:absolute; left:50%; bottom:26px; transform:translateX(-50%); width:min(52vw,520px); pointer-events:none; }
+  #heatwrap { position:absolute; left:50%; bottom:20px; transform:translateX(-50%); width:min(62vw,560px); padding:11px 15px 12px; pointer-events:none; background:linear-gradient(180deg,rgba(10,5,8,.18),rgba(13,5,7,.72)); border:1px solid rgba(255,174,112,.12); clip-path:polygon(14px 0,calc(100% - 14px) 0,100% 50%,calc(100% - 14px) 100%,14px 100%,0 50%); }
   #heatlabel { display:flex; justify-content:space-between; font-size:10px; letter-spacing:3px; opacity:.7; margin-bottom:5px; text-transform:uppercase; }
   #heatbar { position:relative; height:16px; border-radius:9px; background:rgba(255,255,255,.07); box-shadow:inset 0 0 0 1px rgba(255,255,255,.14); overflow:hidden; }
   #heatfill { position:absolute; inset:0; width:0%; border-radius:9px; background:linear-gradient(90deg,#2ee6ff,#ffd23b 55%,#ff7a2c 78%,#ff2b12 100%); transition:width .05s linear; }
@@ -52,6 +52,11 @@
   #distbar { height:6px; border-radius:4px; background:rgba(255,255,255,.08); overflow:hidden; margin-top:5px; box-shadow:inset 0 0 0 1px rgba(255,255,255,.1); }
   #distfill { height:100%; width:0%; background:linear-gradient(90deg,#ffb37a,#ff3b1f); transition:width .2s; }
   #distwrap .lbl { font-size:9px; }
+  #bossHud { position:absolute; left:50%; top:58px; transform:translateX(-50%); width:min(54vw,480px); opacity:0; transition:opacity .25s; text-align:center; }
+  #bossHud.show { opacity:1; }
+  #bossHud .boss-title { color:#ffd6a1; font-size:10px; font-weight:800; letter-spacing:5px; text-transform:uppercase; text-shadow:0 0 12px var(--hot); }
+  #bossTrack { height:9px; margin-top:7px; padding:2px; background:rgba(6,3,5,.78); border:1px solid rgba(255,105,52,.38); clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%); }
+  #bossFill { width:100%; height:100%; background:linear-gradient(90deg,#ffb12e,#ff391c 72%,#fff0ba); box-shadow:0 0 15px rgba(255,60,20,.75); transition:width .1s linear; }
 
   /* banners */
   #banner { position:absolute; left:50%; top:38%; transform:translate(-50%,-50%); text-align:center; opacity:0; transition:opacity .3s; }
@@ -110,6 +115,10 @@
   #pause .big { color:#fff; font-size:clamp(34px,7vw,72px); font-weight:900; letter-spacing:10px; text-shadow:0 0 28px var(--hot); }
   #pause .hint { color:var(--cyan); font-size:12px; letter-spacing:3px; text-transform:uppercase; }
   #pause .menu-actions { width:min(82vw,300px); }
+  #pause::before,#go::before { content:""; position:absolute; width:min(70vmin,620px); aspect-ratio:1; border:1px solid rgba(255,99,38,.18); border-radius:50%; box-shadow:inset 0 0 70px rgba(255,55,18,.08),0 0 70px rgba(255,55,18,.08); }
+  #pause>* ,#go>* { position:relative; z-index:1; }
+  #go { background:radial-gradient(circle at 50% 46%,rgba(103,20,9,.52),rgba(5,2,3,.95) 58%); }
+  #go .statline { min-width:300px; padding:10px 18px; background:rgba(8,4,7,.44); border-top:1px solid rgba(255,255,255,.08); }
   #settings { z-index:40; }
   .panel { width:min(90vw,570px); max-height:min(88vh,760px); overflow:auto; padding:30px; background:linear-gradient(145deg,rgba(38,9,8,.96),rgba(8,4,7,.96)); border:1px solid rgba(255,122,44,.35); border-radius:14px; box-shadow:0 24px 80px rgba(0,0,0,.7),inset 0 1px rgba(255,255,255,.08); text-align:left; }
   .panel-head { margin-bottom:24px; padding-bottom:14px; border-bottom:1px solid rgba(255,255,255,.12); }
@@ -125,6 +134,7 @@
   .range-control output { width:34px; color:var(--cyan); font-size:11px; font-weight:800; text-align:right; }
   .panel .menu-link { width:100%; margin-top:22px; }
   @media (max-width:760px) { .title-console{display:block;width:min(88vw,520px)} .solar-aperture{width:100vw;right:-45vw;opacity:.48} .mission-copy{font-size:12px} #title .logo{font-size:clamp(58px,18vw,100px)} }
+  @media (max-width:620px) { .corner{margin:8px;padding:8px 9px;min-width:110px}.val{font-size:20px}#wavewrap .val{font-size:14px}#distwrap{top:9px;width:34vw}#heatwrap{width:90vw;bottom:10px}#bossHud{top:52px;width:78vw} }
   @media (max-height:760px) { #title .logo{font-size:clamp(55px,9vw,100px)} .mission-copy{margin-top:10px}.record{margin-top:12px}.controls{margin-top:12px!important}.menu-actions{margin-top:14px}.panel{padding:22px}.setting{padding:11px 0} }
   @media (prefers-reduced-motion:reduce) { *,*::before,*::after { transition-duration:.01ms!important; animation-duration:.01ms!important; } }
 </style>
@@ -142,6 +152,7 @@
     <div id="wavewrap"><div class="lbl">Sector</div><div class="val">1 &middot; Wave 1</div></div>
   </div>
   <div id="distwrap"><div class="lbl">Approach</div><div id="distbar"><div id="distfill"></div></div></div>
+  <div id="bossHud"><div class="boss-title">Warden integrity</div><div id="bossTrack"><div id="bossFill"></div></div></div>
 
   <div id="heatwrap">
     <div id="overheat">// OVERHEAT //</div>
@@ -278,7 +289,7 @@ const renderer = new THREE.WebGLRenderer({ antialias:true, powerPreference:'high
 renderer.setSize(innerWidth, innerHeight);
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2)*settings.quality);
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.15;
+renderer.toneMappingExposure = 1.02;
 app.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
@@ -290,7 +301,7 @@ camera.lookAt(0, 0.4, -18);
 
 const composer = new EffectComposer(renderer);
 composer.addPass(new RenderPass(scene, camera));
-const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.9, 0.75, 0.62);
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.72, 0.7, 0.66);
 bloom.enabled = settings.bloom;
 composer.addPass(bloom);
 
@@ -301,6 +312,11 @@ const rim = new THREE.DirectionalLight(0xff4a1e, 1.1); rim.position.set(3, -2, -
 const playerGlow = new THREE.PointLight(0x33e6ff, 0, 12); scene.add(playerGlow);
 
 // ============================================================= ENVIRONMENT (the sun + starfield + dust)
+function makeParticleTexture(){
+  const c=document.createElement('canvas');c.width=c.height=32;const x=c.getContext('2d'),g=x.createRadialGradient(16,16,1,16,16,15);
+  g.addColorStop(0,'rgba(255,255,245,1)');g.addColorStop(.3,'rgba(255,190,105,.9)');g.addColorStop(1,'rgba(255,90,25,0)');x.fillStyle=g;x.fillRect(0,0,32,32);return new THREE.CanvasTexture(c);
+}
+const particleTexture=makeParticleTexture();
 let sun, sunGlow, sunHue = 0;
 {
   const g = new THREE.SphereGeometry(34, 48, 48);
@@ -336,7 +352,7 @@ let sun, sunGlow, sunHue = 0;
   const N = 900, pos = new Float32Array(N*3);
   for (let i=0;i<N;i++){ pos[i*3]=(Math.random()-.5)*400; pos[i*3+1]=(Math.random()-.5)*300; pos[i*3+2]=-Math.random()*380-20; }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos,3));
-  const m = new THREE.PointsMaterial({ color:0xffd9b0, size:0.7, sizeAttenuation:true, transparent:true, opacity:0.8 });
+  const m = new THREE.PointsMaterial({ map:particleTexture,color:0xffd9b0, size:0.72, sizeAttenuation:true, transparent:true, opacity:0.66,alphaTest:.015,depthWrite:false });
   scene.add(new THREE.Points(g, m));
 }
 // streaming ember dust -> conveys forward travel
@@ -345,12 +361,12 @@ let dust, dustPos, speedDust;
   const N = 380; dustPos = new Float32Array(N*3);
   for (let i=0;i<N;i++){ dustPos[i*3]=(Math.random()-.5)*70; dustPos[i*3+1]=(Math.random()-.5)*40; dustPos[i*3+2]=-Math.random()*160; }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(dustPos,3));
-  const m = new THREE.PointsMaterial({ color:0xff9a4a, size:0.5, sizeAttenuation:true, transparent:true, opacity:0.9, blending:THREE.AdditiveBlending, depthWrite:false });
+  const m = new THREE.PointsMaterial({ map:particleTexture,color:0xff9a4a, size:0.62, sizeAttenuation:true, transparent:true, opacity:0.62,alphaTest:.015,blending:THREE.AdditiveBlending, depthWrite:false });
   dust = new THREE.Points(g, m); scene.add(dust);
   const SN=120, spos=new Float32Array(SN*3);
   for(let i=0;i<SN;i++){ spos[i*3]=(Math.random()-.5)*48; spos[i*3+1]=(Math.random()-.5)*28; spos[i*3+2]=-Math.random()*150; }
   const sg=new THREE.BufferGeometry(); sg.setAttribute('position',new THREE.BufferAttribute(spos,3));
-  speedDust=new THREE.Points(sg,new THREE.PointsMaterial({color:0xffd0a0,size:1.15,transparent:true,opacity:.38,blending:THREE.AdditiveBlending,depthWrite:false}));
+  speedDust=new THREE.Points(sg,new THREE.PointsMaterial({map:particleTexture,color:0xffd0a0,size:.82,transparent:true,opacity:.28,alphaTest:.015,blending:THREE.AdditiveBlending,depthWrite:false}));
   scene.add(speedDust);
 }
 function applyDisplaySettings(){
@@ -382,9 +398,9 @@ scene.add(player);
   gunL = new THREE.Mesh(new THREE.CylinderGeometry(0.09,0.09,1.0,8), barMat.clone()); gunL.rotation.x=Math.PI*0.5; gunL.position.set(-0.95,0,-0.6); player.add(gunL);
   gunR = gunL.clone(); gunR.material = barMat.clone(); gunR.position.x=0.95; player.add(gunR);
   // engine
-  const eng = new THREE.Mesh(new THREE.ConeGeometry(0.32,1.0,10), new THREE.MeshBasicMaterial({ color:0x9ff8ff, transparent:true, opacity:0.9, blending:THREE.AdditiveBlending }));
+  const eng = new THREE.Mesh(new THREE.ConeGeometry(0.23,0.75,10), new THREE.MeshBasicMaterial({ color:0xc9fbff, transparent:true, opacity:0.74, blending:THREE.AdditiveBlending }));
   eng.rotation.x = Math.PI*-0.5; eng.position.z = 1.35; player.add(eng); engineFlame = eng;
-  for(const x of [-.42,.42]){ const trail=new THREE.Mesh(new THREE.ConeGeometry(.2,2.8,10),new THREE.MeshBasicMaterial({color:0x22dff2,transparent:true,opacity:.38,blending:THREE.AdditiveBlending,depthWrite:false})); trail.rotation.x=-Math.PI/2; trail.position.set(x,0,2.15); player.add(trail); }
+  for(const x of [-.42,.42]){ const trail=new THREE.Mesh(new THREE.ConeGeometry(.13,2.25,10),new THREE.MeshBasicMaterial({color:0x22dff2,transparent:true,opacity:.25,blending:THREE.AdditiveBlending,depthWrite:false})); trail.rotation.x=-Math.PI/2; trail.position.set(x,0,1.9); player.add(trail); }
 }
 var gunL, gunR, engineFlame;
 player.position.set(0, 0, PLAYER_Z);
@@ -407,7 +423,7 @@ function boom(pos, color, count, spread, size){
   for(let i=0;i<count;i++){ p[i*3]=pos.x; p[i*3+1]=pos.y; p[i*3+2]=pos.z;
     v.push(new THREE.Vector3((Math.random()-.5)*spread,(Math.random()-.5)*spread,(Math.random()-.5)*spread)); }
   const g=new THREE.BufferGeometry(); g.setAttribute('position',new THREE.BufferAttribute(p,3));
-  const m=new THREE.PointsMaterial({color,size:size||0.5,transparent:true,opacity:1,blending:THREE.AdditiveBlending,depthWrite:false});
+  const m=new THREE.PointsMaterial({map:particleTexture,color,size:size||0.5,transparent:true,opacity:1,alphaTest:.015,blending:THREE.AdditiveBlending,depthWrite:false});
   const pts=new THREE.Points(g,m); scene.add(pts); bursts.push({pts,v,life:0,ttl:0.6+Math.random()*0.3});
 }
 
@@ -589,6 +605,7 @@ let sectorWaves = [];
 function startSector(sector){
   state.sector=sector; state.wave=0; state.bossActive=false; state.bossKilled=false;
   state.dist=0; state.distTarget=100; boss=null;
+  document.getElementById('bossHud').classList.remove('show');
   sectorWaves = buildSector(sector);
   sunHue = Math.min(sector*0.12, 0.5);   // shift sun hotter each sector
   banner('SECTOR '+sector, 'APPROACH VECTOR LOCKED');
@@ -604,6 +621,7 @@ function nextWave(){
 }
 function beginBoss(){
   state.bossActive = true; state.waveActive=false;
+  document.getElementById('bossHud').classList.add('show');
   banner('WARDEN INBOUND', 'SECTOR '+state.sector+' GUARDIAN');
   after(1.4, ()=>{ if(state.phase==='playing') spawnBoss(state.sector); });
 }
@@ -738,6 +756,7 @@ function startGame(){
   for(const b of [...eboltPool.live]) eboltPool.put(b);
   for(const b of [...boltPool.live]) boltPool.put(b);
   boss=null;
+  document.getElementById('bossHud').classList.remove('show');
   player.position.set(0,0,PLAYER_Z);
   addScore(0); updateHull();
   document.getElementById('title').classList.add('hide');
@@ -940,11 +959,11 @@ function updatePlaying(dt){
         const ang=(i/n)*Math.PI*2 + boss.t; const spd=30;
         b.userData.vx=Math.cos(ang)*spd*0.5; b.userData.vy=Math.sin(ang)*spd*0.5; b.userData.vz=40; b.userData.life=0; }
     }
-    // boss HP bar via dist bar reuse
-    distFill.style.width = (100*boss.hp/boss.maxhp)+'%';
+    document.getElementById('bossFill').style.width = (100*boss.hp/boss.maxhp)+'%';
     if(boss.hp<=0){ // dead
       for(let k=0;k<5;k++) setTimeout(()=>boom(boss.mesh.position, 0xffd23b, 30, 10, 1.0), k*120);
       scene.remove(boss.mesh); addScore(2000+state.sector*500); state.shake=1.2; flashScreen(0.8); boss=null;
+      document.getElementById('bossHud').classList.remove('show');
       state.bossKilled=true; state.bossActive=false;
       banner('SECTOR CLEAR', 'PUSHING DEEPER');
       after(2.6, ()=>{ if(state.phase==='playing'){ if(state.hull<state.maxHull){state.hull++; updateHull();} startSector(state.sector+1); } });
