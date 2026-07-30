@@ -23,6 +23,8 @@ The game also pauses automatically when its window loses focus.
 
 The opening menu includes persistent flight settings for master audio, separate music and effects volume, camera shake, glow effects, screen flashes, particle density, render quality, and HUD brightness.
 
+First-time pilots enter a guided, playable training flight. Five verified objectives teach steering, firing, heat buildup, perfect-vent timing, and hostile attack telegraphs before handing control directly into the campaign. Training can be skipped and replayed from the title screen; completion is saved locally.
+
 Combat readability is reinforced with distance-scaled enemy brackets, visible attack-charge warnings, damage health bars, Warden warning frames, and high-contrast hostile projectiles.
 Environmental debris stays outside the central combat corridor and uses muted rust tones, leaving bright red-white motion exclusively for hostile attacks.
 

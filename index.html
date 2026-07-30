@@ -57,6 +57,16 @@
   #bossHud .boss-title { color:#ffd6a1; font-size:10px; font-weight:800; letter-spacing:5px; text-transform:uppercase; text-shadow:0 0 12px var(--hot); }
   #bossTrack { height:9px; margin-top:7px; padding:2px; background:rgba(6,3,5,.78); border:1px solid rgba(255,105,52,.38); clip-path:polygon(6px 0,100% 0,calc(100% - 6px) 100%,0 100%); }
   #bossFill { width:100%; height:100%; background:linear-gradient(90deg,#ffb12e,#ff391c 72%,#fff0ba); box-shadow:0 0 15px rgba(255,60,20,.75); transition:width .1s linear; }
+  #tutorialHud { position:absolute; left:50%; top:104px; width:min(88vw,520px); transform:translateX(-50%); padding:16px 20px 15px; color:#fff4e5; background:linear-gradient(135deg,rgba(8,12,16,.9),rgba(34,8,8,.82)); border:1px solid rgba(56,225,244,.35); clip-path:polygon(12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%,0 12px); box-shadow:0 14px 40px rgba(0,0,0,.42),inset 3px 0 var(--cyan); pointer-events:auto; transition:opacity .2s,transform .2s; }
+  #tutorialHud.hide { opacity:0;visibility:hidden;transform:translate(-50%,-8px); }
+  .tutorial-kicker { color:var(--cyan); font-size:9px; font-weight:800; letter-spacing:4px; text-transform:uppercase; }
+  .tutorial-objective { margin-top:6px; font-size:17px; font-weight:800; letter-spacing:2px; text-transform:uppercase; }
+  .tutorial-copy { margin-top:6px; color:#d6b5aa; font-size:11px; line-height:1.45; letter-spacing:.4px; }
+  .tutorial-track { height:3px; margin-top:12px; background:rgba(255,255,255,.1); }
+  #tutorialProgress { width:0%;height:100%;background:linear-gradient(90deg,var(--cyan),#fff3a8,var(--hot));box-shadow:0 0 10px var(--cyan);transition:width .2s; }
+  .tutorial-actions { display:flex;justify-content:flex-end;gap:8px;margin-top:11px; }
+  .tutorial-actions .menu-link { padding:7px 11px;font-size:9px; }
+  .tutorial-actions .hide { display:none; }
 
   /* banners */
   #banner { position:absolute; left:50%; top:38%; transform:translate(-50%,-50%); text-align:center; opacity:0; transition:opacity .3s; }
@@ -180,6 +190,13 @@
   </div>
 
   <div id="banner"><div class="big"></div><div class="sub"></div></div>
+  <div id="tutorialHud" class="hide">
+    <div class="tutorial-kicker" id="tutorialKicker">Flight school // 1 of 5</div>
+    <div class="tutorial-objective" id="tutorialObjective">Take the controls</div>
+    <div class="tutorial-copy" id="tutorialCopy">Move with WASD or the arrow keys.</div>
+    <div class="tutorial-track"><div id="tutorialProgress"></div></div>
+    <div class="tutorial-actions"><button class="menu-link" id="tutorialSkip">Skip training</button><button class="menu-link hide" id="tutorialContinue">Begin campaign</button></div>
+  </div>
 </div>
 
 <div id="flash"></div>
@@ -220,6 +237,7 @@
       </div>
       <div class="menu-actions">
         <button class="btn" id="startbtn">Launch Run</button>
+        <button class="menu-link" id="trainingbtn">Training Flight</button>
         <button class="menu-link" id="settingsbtn">Flight Settings</button>
       </div>
       <div class="controls">
@@ -624,8 +642,9 @@ function spawnEnemy(type, x, y){
   mesh.position.set(x, y, SPAWN_Z - Math.random()*20);
   scene.add(mesh);
   const levelScale=1+state.level*.16;
-  enemies.push({ type, mesh, hp:def.hp*levelScale, maxhp:def.hp*levelScale, def, fireT: def.fire*(0.4+Math.random()*0.6),
-    phase:Math.random()*Math.PI*2, baseX:x, baseY:y, shield:type==='shield'?3+state.level:0, stagger:0, sparkT:.2+Math.random() });
+  const enemy={ type, mesh, hp:def.hp*levelScale, maxhp:def.hp*levelScale, def, fireT: def.fire*(0.4+Math.random()*0.6),
+    phase:Math.random()*Math.PI*2, baseX:x, baseY:y, shield:type==='shield'?3+state.level:0, stagger:0, sparkT:.2+Math.random() };
+  enemies.push(enemy);return enemy;
 }
 
 // boss
@@ -673,6 +692,45 @@ const UPGRADES=[
   {name:'Hunter relay',desc:'All combat score gains increase by 20%.',tag:'Run score',apply:()=>runMods.score*=1.2},
   {name:'Heat sink',desc:'Shots generate 12% less weapon heat.',tag:'Fire discipline',apply:()=>runMods.heat*=.88},
 ];
+const TUTORIAL_STEPS=[
+  {title:'Take the controls',copy:'Move with WASD or the arrow keys. Bank in any direction to calibrate the flight surfaces.'},
+  {title:'Fire a burst',copy:'Hold J or the pointer to fire. Your guns use heat instead of ammunition.'},
+  {title:'Ride the redline',copy:'Keep firing until the heat gauge enters the striped red zone. Release before the weapons overheat.'},
+  {title:'Perfect vent',copy:'Press Space while the gauge is in the red zone. A perfect vent clears hostile fire and damages nearby targets.'},
+  {title:'Break the target',copy:'Destroy the training drone. Watch its red charge marker—bright pulses mean an attack is imminent.'},
+];
+const tutorial={active:false,step:0,moved:0,shots:0,target:null};
+function renderTutorial(){
+  const step=TUTORIAL_STEPS[tutorial.step];
+  document.getElementById('tutorialKicker').textContent='Flight school // '+(tutorial.step+1)+' of '+TUTORIAL_STEPS.length;
+  document.getElementById('tutorialObjective').textContent=step.title;
+  document.getElementById('tutorialCopy').textContent=step.copy;
+  document.getElementById('tutorialProgress').style.width=(tutorial.step/TUTORIAL_STEPS.length*100)+'%';
+}
+function advanceTutorial(){
+  if(!tutorial.active)return;
+  tutorial.step++;
+  if(tutorial.step>=TUTORIAL_STEPS.length){finishTutorial();return;}
+  if(tutorial.step===3){keys['KeyJ']=false;pointerFire=false;state.firing=false;state.heat=Math.max(REDLINE+2,Math.min(92,state.heat));}
+  if(tutorial.step===4){
+    tutorial.target=spawnEnemy('turret',0,0);tutorial.target.mesh.position.z=-52;tutorial.target.fireT=1.8;tutorial.target.training=true;
+    banner('LIVE TARGET','READ THE ATTACK SIGNAL');
+  }
+  renderTutorial();sfx('transition');
+}
+function finishTutorial(){
+  tutorial.active=false;state.phase='tutorialComplete';window.__redline.god=false;
+  localStorage.setItem('redline_tutorial','complete');
+  document.getElementById('tutorialKicker').textContent='Flight school // certified';
+  document.getElementById('tutorialObjective').textContent='Systems synchronized';
+  document.getElementById('tutorialCopy').textContent='Steer, fire, manage heat, and perfect-vent under pressure. You are cleared for the descent.';
+  document.getElementById('tutorialProgress').style.width='100%';
+  document.getElementById('tutorialSkip').classList.add('hide');
+  document.getElementById('tutorialContinue').classList.remove('hide');
+  document.getElementById('tutorialContinue').focus();
+  document.getElementById('startbtn').textContent='Launch Run';
+  banner('TRAINING COMPLETE','FLIGHT CERTIFICATION GRANTED');sfx('victory');
+}
 // in-game scheduler (dt-based, survives tab throttling — unlike setTimeout)
 function after(sec, fn){ state.timers.push({ t:sec, fn }); }
 window.__redline = { state, enemies, get boss(){return boss;}, kill(){ state.hull=0; }, god:false, addScore:(n)=>state.score+=n,
@@ -838,6 +896,7 @@ function fire(){
     b.userData.vz = -160; b.userData.life=0;
   }
   state.heat = Math.min(HEAT_MAX, state.heat + HEAT_PER_SHOT*runMods.heat);
+  if(tutorial.active&&tutorial.step===1&&++tutorial.shots>=4)advanceTutorial();
   if (state.heat >= HEAT_MAX){ triggerOverheat(); }
   sfx('shoot');
 }
@@ -851,6 +910,7 @@ function doVent(){
   if (state.phase!=='playing') return;
   if (state.overheated){ return; }            // can't vent while cooked
   const perfect = state.heat >= REDLINE;
+  if(tutorial.active&&tutorial.step===3&&perfect)advanceTutorial();
   const big = perfect;
   const radius = (big ? 30 : 18)*runMods.vent;
   // clear enemy bullets within radius
@@ -892,6 +952,7 @@ function killEnemy(e){
   addScore(e.def.score);
   state.shake = Math.max(state.shake, 0.2);
   sfx('boom');
+  if(tutorial.active&&tutorial.step===4&&e===tutorial.target)advanceTutorial();
 }
 function enemyFire(e){
   const b = eboltPool.get();
@@ -919,7 +980,7 @@ const ventHint = document.getElementById('venthint');
 const distFill = document.getElementById('distfill');
 const hullWrap = document.getElementById('hull');
 const bannerEl = document.getElementById('banner');
-function updateWaveHud(){ hudWave.innerHTML = state.bossActive?(state.sector+' &middot; WARDEN'):(state.sector+'-'+(state.level+1)+' &middot; E'+(((state.wave-1)%2)+1)+'/2'); }
+function updateWaveHud(){ hudWave.innerHTML=tutorial.active?'TRAINING':state.bossActive?(state.sector+' &middot; WARDEN'):(state.sector+'-'+(state.level+1)+' &middot; E'+(((state.wave-1)%2)+1)+'/2'); }
 function updateHull(){
   hullWrap.innerHTML='';
   for(let i=0;i<state.maxHull;i++){ const d=document.createElement('div'); d.className='pip'+(i<state.hull?'':' off'); hullWrap.appendChild(d); }
@@ -1018,6 +1079,10 @@ function sfx(kind){
 
 // ============================================================= GAME FLOW
 function startGame(){
+  tutorial.active=false;tutorial.target=null;window.__redline.god=false;
+  document.getElementById('tutorialHud').classList.add('hide');
+  document.getElementById('tutorialSkip').classList.remove('hide');
+  document.getElementById('tutorialContinue').classList.add('hide');
   Object.assign(runMods,{damage:1,cooling:1,vent:1,score:1,maxHull:4,heat:1});
   state.maxHull=4;
   state.phase='playing'; state.score=0; state.hull=state.maxHull; state.heat=0; state.overheated=false; state.overheatT=0;
@@ -1038,6 +1103,18 @@ function startGame(){
   document.getElementById('go').classList.add('hide');
   startSector(1);
 }
+function startTutorial(){
+  startGame();
+  tutorial.active=true;tutorial.step=0;tutorial.moved=0;tutorial.shots=0;tutorial.target=null;
+  state.waveActive=false;state.spawnQueue=[];state.timers.length=0;state.heat=0;state.score=0;hudScore.textContent='0';
+  for(const e of [...enemies]){scene.remove(e.mesh);}enemies.length=0;
+  for(const b of [...eboltPool.live])eboltPool.put(b);
+  currentSectorTheme=SECTORS[0];state.level=0;setLevelScenery(currentSectorTheme,0);
+  window.__redline.god=true;hudWave.textContent='TRAINING';distFill.style.width='0%';
+  document.getElementById('title').classList.add('hide');
+  document.getElementById('tutorialHud').classList.remove('hide');
+  renderTutorial();banner('FLIGHT SCHOOL','SYSTEMS CALIBRATION');
+}
 function gameOver(){
   state.phase='dead';
   setPaused(false);
@@ -1050,8 +1127,13 @@ function gameOver(){
   document.getElementById('reached').textContent = 'Sector '+state.sector;
   after(0.9, ()=> document.getElementById('go').classList.remove('hide'));
 }
-document.getElementById('startbtn').onclick = startGame;
+const tutorialComplete=localStorage.getItem('redline_tutorial')==='complete';
+document.getElementById('startbtn').textContent=tutorialComplete?'Launch Run':'Begin Training';
+document.getElementById('startbtn').onclick = ()=>tutorialComplete||localStorage.getItem('redline_tutorial')==='complete'?startGame():startTutorial();
+document.getElementById('trainingbtn').onclick = startTutorial;
 document.getElementById('againbtn').onclick = startGame;
+document.getElementById('tutorialSkip').onclick = ()=>{localStorage.setItem('redline_tutorial','complete');document.getElementById('startbtn').textContent='Launch Run';startGame();};
+document.getElementById('tutorialContinue').onclick = startGame;
 document.getElementById('settingsbtn').onclick = ()=>openSettings('title');
 document.getElementById('pausesettingsbtn').onclick = ()=>openSettings('pause');
 document.getElementById('settingsbackbtn').onclick = closeSettings;
@@ -1156,6 +1238,7 @@ function updatePlaying(dt){
   if(keys['KeyD']||keys['ArrowRight']) mvx+=1;
   if(keys['KeyW']||keys['ArrowUp']) mvy+=1;
   if(keys['KeyS']||keys['ArrowDown']) mvy-=1;
+  if(tutorial.active&&tutorial.step===0&&(mvx||mvy))advanceTutorial();
   player.position.x = THREE.MathUtils.clamp(player.position.x + mvx*sp*dt, -BOUND_X, BOUND_X);
   player.position.y = THREE.MathUtils.clamp(player.position.y + mvy*sp*dt, -BOUND_Y, BOUND_Y);
   player.rotation.z += (-mvx*0.5 - player.rotation.z)*Math.min(1,dt*8);
@@ -1174,6 +1257,7 @@ function updatePlaying(dt){
   }
   // barrel glow color from heat
   const h = state.heat/HEAT_MAX;
+  if(tutorial.active&&tutorial.step===2&&state.heat>=REDLINE&&!state.overheated)advanceTutorial();
   const bc = new THREE.Color().setHSL(THREE.MathUtils.lerp(0.58,0.0,h), 1, THREE.MathUtils.lerp(0.55,0.5,h));
   gunL.material.color.copy(bc); gunR.material.color.copy(bc);
   playerGlow.position.copy(player.position); playerGlow.color.copy(bc); playerGlow.intensity = 1.5+h*3;
@@ -1207,7 +1291,7 @@ function updatePlaying(dt){
   // ----- enemies behaviour
   for(const e of [...enemies]){
     const m=e.mesh; e.phase+=dt;
-    const advance = e.def.speed * dt * (e.stagger>0?0.25:1);
+    const advance = (e.training?0:e.def.speed) * dt * (e.stagger>0?0.25:1);
     m.position.z += advance;
     if(e.stagger>0) e.stagger-=dt;
     // lateral motion patterns
