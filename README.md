@@ -24,6 +24,7 @@ The game also pauses automatically when its window loses focus.
 The opening menu includes persistent flight settings for sound, camera shake, glow effects, screen flashes, particle density, render quality, and HUD brightness.
 
 Combat readability is reinforced with distance-scaled enemy brackets, visible attack-charge warnings, damage health bars, Warden warning frames, and high-contrast hostile projectiles.
+Environmental debris stays outside the central combat corridor and uses muted rust tones, leaving bright red-white motion exclusively for hostile attacks.
 
 The finished presentation uses protected cockpit-style HUD panels, a dedicated Warden integrity display, soft layered solar particles, controlled bloom and exposure, responsive layouts, and a shared solar-aperture language across title, pause, and failure states.
 

@@ -352,21 +352,26 @@ let sun, sunGlow, sunHue = 0;
   const N = 900, pos = new Float32Array(N*3);
   for (let i=0;i<N;i++){ pos[i*3]=(Math.random()-.5)*400; pos[i*3+1]=(Math.random()-.5)*300; pos[i*3+2]=-Math.random()*380-20; }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos,3));
-  const m = new THREE.PointsMaterial({ map:particleTexture,color:0xffd9b0, size:0.72, sizeAttenuation:true, transparent:true, opacity:0.66,alphaTest:.015,depthWrite:false });
+  const m = new THREE.PointsMaterial({ map:particleTexture,color:0xb78a76, size:0.38, sizeAttenuation:true, transparent:true, opacity:0.42,alphaTest:.015,depthWrite:false });
   scene.add(new THREE.Points(g, m));
 }
 // streaming ember dust -> conveys forward travel
 let dust, dustPos, speedDust;
+function placeOutsideCombatLane(arr,i,xRange,yRange,zRange){
+  let x,y;
+  do{x=(Math.random()-.5)*xRange;y=(Math.random()-.5)*yRange;}while(Math.abs(x)<12&&Math.abs(y)<7);
+  arr[i]=x;arr[i+1]=y;arr[i+2]=-Math.random()*zRange;
+}
 {
-  const N = 380; dustPos = new Float32Array(N*3);
-  for (let i=0;i<N;i++){ dustPos[i*3]=(Math.random()-.5)*70; dustPos[i*3+1]=(Math.random()-.5)*40; dustPos[i*3+2]=-Math.random()*160; }
+  const N = 280; dustPos = new Float32Array(N*3);
+  for (let i=0;i<N;i++) placeOutsideCombatLane(dustPos,i*3,78,46,160);
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(dustPos,3));
-  const m = new THREE.PointsMaterial({ map:particleTexture,color:0xff9a4a, size:0.62, sizeAttenuation:true, transparent:true, opacity:0.62,alphaTest:.015,blending:THREE.AdditiveBlending, depthWrite:false });
+  const m = new THREE.PointsMaterial({ map:particleTexture,color:0x9b624b, size:0.4, sizeAttenuation:true, transparent:true, opacity:0.34,alphaTest:.015,depthWrite:false });
   dust = new THREE.Points(g, m); scene.add(dust);
-  const SN=120, spos=new Float32Array(SN*3);
-  for(let i=0;i<SN;i++){ spos[i*3]=(Math.random()-.5)*48; spos[i*3+1]=(Math.random()-.5)*28; spos[i*3+2]=-Math.random()*150; }
+  const SN=64, spos=new Float32Array(SN*3);
+  for(let i=0;i<SN;i++) placeOutsideCombatLane(spos,i*3,64,38,150);
   const sg=new THREE.BufferGeometry(); sg.setAttribute('position',new THREE.BufferAttribute(spos,3));
-  speedDust=new THREE.Points(sg,new THREE.PointsMaterial({map:particleTexture,color:0xffd0a0,size:.82,transparent:true,opacity:.28,alphaTest:.015,blending:THREE.AdditiveBlending,depthWrite:false}));
+  speedDust=new THREE.Points(sg,new THREE.PointsMaterial({map:particleTexture,color:0xc9825c,size:.48,transparent:true,opacity:.18,alphaTest:.015,depthWrite:false}));
   scene.add(speedDust);
 }
 function applyDisplaySettings(){
@@ -374,8 +379,8 @@ function applyDisplaySettings(){
   renderer.setPixelRatio(Math.min(devicePixelRatio,2)*settings.quality);
   renderer.setSize(innerWidth,innerHeight);
   composer.setSize(innerWidth,innerHeight);
-  dust.geometry.setDrawRange(0,Math.floor(380*settings.particles));
-  if(speedDust) speedDust.geometry.setDrawRange(0,Math.floor(120*settings.particles));
+  dust.geometry.setDrawRange(0,Math.floor(280*settings.particles));
+  if(speedDust) speedDust.geometry.setDrawRange(0,Math.floor(64*settings.particles));
   document.getElementById('hud').style.opacity = settings.hud;
 }
 applyDisplaySettings();
@@ -804,10 +809,10 @@ function update(dt){
   if (state.timers.length){ for (const tm of [...state.timers]){ tm.t-=dt; if(tm.t<=0){ state.timers.splice(state.timers.indexOf(tm),1); try{ tm.fn(); }catch(e){} } } }
   // dust streaming (always, even on title for ambience)
   const arr = dust.geometry.attributes.position.array;
-  for(let i=0;i<arr.length;i+=3){ arr[i+2]+= (state.phase==='playing'?60:22)*dt; if(arr[i+2]>PLAYER_Z+10){ arr[i+2]-=180; arr[i]=(Math.random()-.5)*70; arr[i+1]=(Math.random()-.5)*40; } }
+  for(let i=0;i<arr.length;i+=3){ arr[i+2]+= (state.phase==='playing'?60:22)*dt; if(arr[i+2]>PLAYER_Z+10) placeOutsideCombatLane(arr,i,78,46,180); }
   dust.geometry.attributes.position.needsUpdate = true;
   const sarr=speedDust.geometry.attributes.position.array;
-  for(let i=0;i<sarr.length;i+=3){ sarr[i+2]+=(state.phase==='playing'?105:28)*dt; if(sarr[i+2]>PLAYER_Z+8){sarr[i+2]-=160;sarr[i]=(Math.random()-.5)*48;sarr[i+1]=(Math.random()-.5)*28;} }
+  for(let i=0;i<sarr.length;i+=3){ sarr[i+2]+=(state.phase==='playing'?105:28)*dt; if(sarr[i+2]>PLAYER_Z+8) placeOutsideCombatLane(sarr,i,64,38,160); }
   speedDust.geometry.attributes.position.needsUpdate=true;
 
   // sun drift + hue
