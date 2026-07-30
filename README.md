@@ -17,6 +17,11 @@ Offense and defense share one gauge. Every fight is a tension-and-release rhythm
 | Steer | `W` `A` `S` `D` / arrows |
 | Fire | hold `J` or click |
 | Vent | `Space` |
+| Pause / resume | `P` or `Escape` |
+
+The game also pauses automatically when its window loses focus.
+
+The opening menu includes persistent flight settings for sound, camera shake, glow effects, screen flashes, particle density, render quality, and HUD brightness.
 
 ## Structure
 Sectors of escalating waves — darters, orb-lobbing bombers, debris turrets, and shielded elites — each capped by a **Warden** boss. Clear a sector, patch a hull point, push deeper. Chase the high score.
