@@ -21,7 +21,7 @@ Offense and defense share one gauge. Every fight is a tension-and-release rhythm
 
 The game also pauses automatically when its window loses focus.
 
-The opening menu includes persistent flight settings for sound, camera shake, glow effects, screen flashes, particle density, render quality, and HUD brightness.
+The opening menu includes persistent flight settings for master audio, separate music and effects volume, camera shake, glow effects, screen flashes, particle density, render quality, and HUD brightness.
 
 Combat readability is reinforced with distance-scaled enemy brackets, visible attack-charge warnings, damage health bars, Warden warning frames, and high-contrast hostile projectiles.
 Environmental debris stays outside the central combat corridor and uses muted rust tones, leaving bright red-white motion exclusively for hostile attacks.
@@ -34,6 +34,15 @@ Multi-part procedural models give the player swept wings, armor, engine pods, in
 Each sector contains three named levels of escalating waves — darters, orb-lobbing bombers, debris turrets, and shielded elites — followed by a themed **Warden** boss. Clear a sector, patch a hull point, and push into the next region.
 
 The campaign arc moves through **Ember Reach**, **Grave Orbit**, **Helioforge Array**, **Corona Scar**, and **Core Threshold**. Each region has its own three-level scenery progression, atmosphere, and Warden palette.
+
+Each sector also has its own looping score: open ambience in Ember Reach, ominous drift through Grave Orbit, an industrial pulse in Helioforge Array, urgent momentum in Corona Scar, and a dark transmission motif at Core Threshold. The title screen, transitions, combat, vents, impacts, bosses, and sector clears have dedicated audio cues.
+
+## Audio credits
+
+- Music and UI cues: [Dark Sci-Fi Audio Pack by SRG774](https://opengameart.org/content/dark-sci-fi-audio-pack), released under CC0 1.0.
+- Combat and system effects: [Sci-Fi Sounds by Kenney](https://opengameart.org/content/sci-fi-sounds), released under CC0 1.0.
+
+Attribution is not required by either license, but the creators deserve the credit.
 
 ## Tech
 Single-file [Three.js](https://threejs.org/) (r161) with `UnrealBloomPass`. No build step — open `index.html` or serve statically.
