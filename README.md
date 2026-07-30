@@ -23,6 +23,8 @@ The game also pauses automatically when its window loses focus.
 
 The opening menu includes persistent flight settings for sound, camera shake, glow effects, screen flashes, particle density, render quality, and HUD brightness.
 
+Combat readability is reinforced with distance-scaled enemy brackets, visible attack-charge warnings, damage health bars, Warden warning frames, and high-contrast hostile projectiles.
+
 ## Structure
 Sectors of escalating waves — darters, orb-lobbing bombers, debris turrets, and shielded elites — each capped by a **Warden** boss. Clear a sector, patch a hull point, push deeper. Chase the high score.
 

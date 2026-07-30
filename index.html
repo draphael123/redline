@@ -395,7 +395,9 @@ function makePool(create, n){ const free=[], live=[]; for(let i=0;i<n;i++){ cons
   put(o){ o.visible=false; const i=this.live.indexOf(o); if(i>=0)this.live.splice(i,1); this.free.push(o); } }; }
 
 const boltPool = makePool(()=>{ const g=new THREE.Group(); const core=new THREE.Mesh(new THREE.CylinderGeometry(.055,.055,1.9,6),new THREE.MeshBasicMaterial({color:0xffffff})); const glow=new THREE.Mesh(new THREE.CylinderGeometry(.16,.08,2.8,8),new THREE.MeshBasicMaterial({color:0x35eaff,transparent:true,opacity:.35,blending:THREE.AdditiveBlending,depthWrite:false})); g.add(glow,core); return g; }, 60);
-const eboltPool = makePool(()=>{ const g=new THREE.Group(); const core=new THREE.Mesh(new THREE.SphereGeometry(.25,10,10),new THREE.MeshBasicMaterial({color:0xfff1a0})); const glow=new THREE.Mesh(new THREE.SphereGeometry(.48,10,10),new THREE.MeshBasicMaterial({color:0xff5a20,transparent:true,opacity:.38,blending:THREE.AdditiveBlending,depthWrite:false})); g.add(glow,core); return g; }, 120);
+function makeHaloTexture(){ const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d'),q=x.createRadialGradient(32,32,2,32,32,31);q.addColorStop(0,'#ffffff');q.addColorStop(.18,'#fff36b');q.addColorStop(.42,'#ff3018');q.addColorStop(1,'rgba(255,0,0,0)');x.fillStyle=q;x.fillRect(0,0,64,64);return new THREE.CanvasTexture(c); }
+const hostileHalo=makeHaloTexture();
+const eboltPool = makePool(()=>{ const g=new THREE.Group(); const core=new THREE.Mesh(new THREE.SphereGeometry(.3,10,10),new THREE.MeshBasicMaterial({color:0xffffff})); const glow=new THREE.Mesh(new THREE.SphereGeometry(.56,10,10),new THREE.MeshBasicMaterial({color:0xff2418,transparent:true,opacity:.58,blending:THREE.AdditiveBlending,depthWrite:false})); const halo=new THREE.Sprite(new THREE.SpriteMaterial({map:hostileHalo,transparent:true,opacity:.9,depthWrite:false,depthTest:false}));halo.scale.set(1.65,1.65,1);g.add(glow,core,halo);g.userData.halo=halo;return g; }, 120);
 for (const b of boltPool.free) b.rotation.x = Math.PI*0.5;
 
 // explosion particles (points bursts)
@@ -429,6 +431,29 @@ const ENEMY = {
   turret:  { hp:4,  r:1.3, color:0xd8d8e0, score:180, speed:16, fire:1.1,  size:1.1 },
   shield:  { hp:9,  r:1.5, color:0x8fd0ff, score:400, speed:14, fire:1.8,  size:1.4 },
 };
+function makeMarkerTexture(){
+  const c=document.createElement('canvas'); c.width=c.height=128; const x=c.getContext('2d');
+  const corners=()=>{for(const [sx,sy] of [[1,1],[-1,1],[1,-1],[-1,-1]]){x.beginPath();x.moveTo(64+sx*52,64+sy*28);x.lineTo(64+sx*52,64+sy*52);x.lineTo(64+sx*28,64+sy*52);x.stroke();}};
+  x.lineJoin='round'; x.strokeStyle='rgba(3,6,9,.92)'; x.lineWidth=11; corners();
+  x.strokeStyle='#27edff'; x.lineWidth=4; x.shadowColor='#00c8ff'; x.shadowBlur=12; corners();
+  x.shadowBlur=0; x.strokeStyle='rgba(3,6,9,.9)'; x.lineWidth=7; x.beginPath(); x.arc(64,64,32,0,Math.PI*2); x.stroke();
+  x.strokeStyle='#fff1a4'; x.lineWidth=2; x.beginPath(); x.arc(64,64,32,0,Math.PI*2); x.stroke();
+  return new THREE.CanvasTexture(c);
+}
+const markerTexture=makeMarkerTexture();
+function makeContrastTexture(){const c=document.createElement('canvas');c.width=c.height=64;const x=c.getContext('2d'),q=x.createRadialGradient(32,32,5,32,32,31);q.addColorStop(0,'rgba(3,4,8,.72)');q.addColorStop(.58,'rgba(3,4,8,.5)');q.addColorStop(1,'rgba(3,4,8,0)');x.fillStyle=q;x.fillRect(0,0,64,64);return new THREE.CanvasTexture(c);}
+const contrastTexture=makeContrastTexture();
+function addThreatUI(g,type){
+  const contrast=new THREE.Sprite(new THREE.SpriteMaterial({map:contrastTexture,transparent:true,opacity:.72,depthWrite:false}));
+  contrast.scale.set(3.2,3.2,1); contrast.position.z=-.9; g.add(contrast);
+  const marker=new THREE.Sprite(new THREE.SpriteMaterial({map:markerTexture,color:0xffffff,transparent:true,opacity:.9,depthWrite:false,depthTest:false}));
+  marker.scale.set(3.5,3.5,1); marker.position.z=.25; g.add(marker);
+  const hpBack=new THREE.Sprite(new THREE.SpriteMaterial({color:0x160306,transparent:true,opacity:.82,depthWrite:false}));
+  hpBack.scale.set(2.2,.16,1); hpBack.position.set(0,1.75,.3); hpBack.visible=false; g.add(hpBack);
+  const hpFill=new THREE.Sprite(new THREE.SpriteMaterial({color:type==='shield'?0x35eaff:0xffb33f,transparent:true,opacity:.95,depthWrite:false}));
+  hpFill.scale.set(2.05,.08,1); hpFill.position.set(0,1.75,.32); hpFill.visible=false; g.add(hpFill);
+  g.userData.contrast=contrast; g.userData.marker=marker; g.userData.hpBack=hpBack; g.userData.hpFill=hpFill;
+}
 function buildEnemyMesh(type){
   const g = new THREE.Group();
   const c = ENEMY[type].color;
@@ -448,7 +473,8 @@ function buildEnemyMesh(type){
     sh.rotation.x=Math.PI*0.5; sh.position.z=-0.2; g.add(sh); g.userData.shieldMesh=sh;
   }
   const beacon=new THREE.Mesh(new THREE.SphereGeometry(.16,8,8),new THREE.MeshBasicMaterial({color:type==='shield'?0x74efff:0xffd06a}));
-  beacon.position.z=-.72; g.add(beacon);
+  beacon.position.z=-.72; g.add(beacon); g.userData.beacon=beacon;
+  addThreatUI(g,type);
   return g;
 }
 function spawnEnemy(type, x, y){
@@ -468,8 +494,10 @@ function spawnBoss(sector){
   hull.rotation.x=Math.PI*0.5; g.add(hull);
   const ring=new THREE.Mesh(new THREE.TorusGeometry(3.4,0.35,10,28),new THREE.MeshBasicMaterial({color:0xff4a1e})); ring.rotation.y=Math.PI*0.5; g.add(ring);
   const core=new THREE.Mesh(new THREE.SphereGeometry(1.0,20,20),new THREE.MeshBasicMaterial({color:0xffd23b})); core.position.z=-2.2; g.add(core);
+  const warning=new THREE.Sprite(new THREE.SpriteMaterial({map:markerTexture,color:0xffd36a,transparent:true,opacity:.78,depthWrite:false,depthTest:false}));
+  warning.scale.set(9,9,1); warning.position.z=-2; g.add(warning);
   g.position.set(0,0,SPAWN_Z+30); g.scale.setScalar(1.3); scene.add(g);
-  boss = { mesh:g, core, hp:60+sector*35, maxhp:60+sector*35, t:0, fireT:1.2, enterT:0, pattern:0 };
+  boss = { mesh:g, core, warning, hp:60+sector*35, maxhp:60+sector*35, t:0, fireT:1.2, enterT:0, pattern:0 };
 }
 
 // ============================================================= STATE
@@ -844,6 +872,7 @@ function updatePlaying(dt){
   }
   // ----- enemy bolts
   for(const b of [...eboltPool.live]){ b.position.x+=b.userData.vx*dt; b.position.y+=b.userData.vy*dt; b.position.z+=b.userData.vz*dt; b.userData.life+=dt;
+    const danger=THREE.MathUtils.clamp((b.position.z+80)/80,0,1); b.scale.setScalar(1+danger*.28); if(b.userData.halo)b.userData.halo.material.opacity=.72+Math.sin(state.time*18)*.18;
     if(b.position.z>DESPAWN_Z || b.userData.life>5){ eboltPool.put(b); continue; }
     if(b.position.distanceTo(player.position) < 0.9){ eboltPool.put(b); hitPlayer(); }
   }
@@ -860,9 +889,20 @@ function updatePlaying(dt){
     else if(e.type==='turret'){ m.lookAt(player.position); }
     else if(e.type==='shield'){ m.position.x += (player.position.x - m.position.x)*Math.min(1,dt*0.6); m.lookAt(player.position); }
     m.rotation.z += dt*0.5;
+    const marker=m.userData.marker, hpRatio=Math.max(0,e.hp/e.def.hp), markerScale=THREE.MathUtils.clamp(Math.abs(m.position.z)/55,1,2.5);
+    marker.scale.setScalar(3.5*markerScale);
+    m.userData.contrast.scale.setScalar(3.2*markerScale);
+    const damaged=hpRatio<1 || (e.type==='shield'&&e.shield<3);
+    m.userData.hpBack.visible=damaged; m.userData.hpFill.visible=damaged;
+    m.userData.hpFill.scale.x=2.05*hpRatio; m.userData.hpFill.position.x=-(1-hpRatio)*1.02;
     // firing
     if(m.position.z > SPAWN_Z+30 && e.stagger<=0){
       e.fireT -= dt;
+      const charging=e.fireT<.48;
+      marker.material.color.setHex(charging?0xff3b1f:(e.type==='shield'?0x85f3ff:0xffffff));
+      marker.material.opacity=charging?1:.88;
+      if(charging){ const pulse=1+Math.sin(state.time*34)*.12; marker.scale.multiplyScalar(pulse); m.userData.beacon.scale.setScalar(1.8+Math.sin(state.time*38)*.6); }
+      else m.userData.beacon.scale.setScalar(1);
       if(e.fireT<=0){ e.fireT = e.def.fire*(0.7+Math.random()*0.6); if(m.position.z<DESPAWN_Z-4) enemyFire(e); }
     }
     // reached player plane -> passes, small threat + despawn
@@ -888,6 +928,10 @@ function updatePlaying(dt){
     else { boss.mesh.position.x = Math.sin(boss.t*0.6)*4; boss.mesh.position.y = Math.cos(boss.t*0.4)*2; }
     boss.mesh.rotation.z += dt*0.4; boss.core.material.color.setHSL(0.12,1,0.5+Math.sin(boss.t*6)*0.1);
     boss.fireT -= dt;
+    const bossCharging=boss.fireT<.55;
+    boss.warning.material.color.setHex(bossCharging?0xff2b12:0xffd36a);
+    boss.warning.material.opacity=bossCharging?.95:.62;
+    const ws=bossCharging?9.5+Math.sin(state.time*28)*1.2:9; boss.warning.scale.set(ws,ws,1);
     if(boss.fireT<=0 && boss.mesh.position.z>SPAWN_Z+40){
       boss.fireT = Math.max(0.4, 1.2 - state.sector*0.1);
       // radial burst
